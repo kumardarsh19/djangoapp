@@ -5,7 +5,7 @@ import numpy as np
 from IPython.display import clear_output
 from scipy.fftpack import fft, fftshift
 from scipy.signal import *
-from sklearn.preprocessing import normalize
+from sklearn import preprocessing
 
 LOW_THRESHOLD = 2e-4;
 HIGH_THRESHOLD = 0.7;
@@ -115,6 +115,9 @@ def getSTFT(fileName):
     plt.show()
 
     return t, f, magZ, sixteenth;
+
+def normalize(signal):
+    return signal / np.amax(signal);
 
 def segmentSignal(signal, sixteenth, starti):
     segment = np.copy(signal);
