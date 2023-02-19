@@ -1,4 +1,14 @@
 .venv/
 */.DS_Store
 .DS_Store
-__pycache__/audio_to_freq.cpython-37.pyc
+__pycache__
+
+# Django #
+*.log
+*.pot
+*.pyc
+__pycache__
+db.sqlite3
+media
+
+
