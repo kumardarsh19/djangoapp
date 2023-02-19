@@ -5,7 +5,7 @@ import numpy as np
 from IPython.display import clear_output
 from scipy.fftpack import fft, fftshift
 from scipy.signal import *
-from sklearn.preprocessing import *
+from sklearn.preprocessing import normalize
 
 LOW_THRESHOLD = 2e-4;
 HIGH_THRESHOLD = 0.7;
@@ -118,6 +118,105 @@ def getSTFT(fileName):
 
     return t, f, magZ, sixteenth;
 
+def segmentSignal(signal, sixteenth, starti):
+    segment = np.copy(signal);
+
+    for i in range(len(signal)):
+        segment[i] = segment[i] * ((i > starti) and (i < starti+sixteenth));
+    
+
+    return segment
+
+def getNoteList(fileName):
+    notes = [];
+
+    sample_rate, time_domain_sig = wavfile.read("audios/C-scale.wav");
+   
+    time_domain_sig = time_domain_sig / np.amax(time_domain_sig);
+
+    num_samples = len(time_domain_sig);
+    clip_len = num_samples // sample_rate;
+    onesec = sample_rate;
+    sixteenth = onesec // 4;
+    df = sample_rate / num_samples;
+    time_ax = np.linspace(0, clip_len, num_samples);
+    freq_ax = np.linspace(0, df * (num_samples - 1), num_samples);
+
+    
+    for i in range(0, num_samples, sixteenth):
+        segment = segmentSignal(time_domain_sig, sixteenth, i);
+
+        if np.amax(segment) < 0.15: continue
+
+        freq_domain_sig = fft(segment);
+
+        max = np.amax(freq_domain_sig[0: 8000]);
+        maxi = np.where(freq_domain_sig[0:8000] == max)[0];
+        print(maxi)
+
+
+        print("Note detected at ", freq_ax[maxi]);
+
+
+        num_semitones = int(12 * math.log2(freq_ax[maxi] / A4));
+        note = LNOTES[num_semitones % 12]
+        print(note);
+
+        notes.append(note)
+
+
+    return notes;
+
+def getNoteGraph(fileName, plot=True):
+
+    sample_rate, time_domain_sig = wavfile.read("audios/C-scale.wav");
+   
+    num_samples = len(time_domain_sig);
+    clip_len = num_samples // sample_rate;
+    onesec = sample_rate;
+    sixteenth = onesec // 4;
+    df = sample_rate / num_samples;
+    time_ax = np.linspace(0, clip_len, num_samples);
+    freq_ax = np.linspace(0, df * (num_samples - 1), num_samples);
+
+    
+    segment = segmentSignal(time_domain_sig, sixteenth, int(sample_rate * 2.5));
+
+    
+
+    freq_domain_sig = fft(segment);
+
+    max = np.amax(freq_domain_sig[0: 8000]);
+    maxi = np.where(freq_domain_sig[0:8000] == max)[0];
+    print(maxi)
+
+
+    print("Note detected at ", freq_ax[maxi]);
+
+
+    num_semitones = int(12 * math.log2(freq_ax[maxi] / A4));
+    print(LNOTES[num_semitones % 12]);
+
+    if plot:
+
+        plt.subplot(3, 1, 1)
+        plt.plot(time_ax, time_domain_sig)
+        plt.title("Original Signal")
+        plt.xlim([0, clip_len])
+
+        plt.subplot(3, 1, 2)
+        plt.plot(time_ax, segment)
+        plt.title("Segmented Signal")
+        plt.xlim([0, clip_len])
+
+        plt.subplot(3, 1, 3)    
+        plt.plot(freq_ax, abs(freq_domain_sig))
+        plt.title("Frequency Domain")
+        plt.xlim([200, 600])
+        plt.show()
+
+
+    return None;
 
 def getNotes(fileName):
 
