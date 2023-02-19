@@ -83,8 +83,6 @@ def getSTFT(fileName):
     plt.plot(time_ax, time_domain_sig);
     plt.xlim([0, 8]);
 
-
-
     sixteenth = onesec // 8;
     f, t, Zxx = stft(time_domain_sig, fs=sample_rate, window = 'hann', nperseg = sixteenth, noverlap = sixteenth // 8);
 
