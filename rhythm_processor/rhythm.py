@@ -5,12 +5,13 @@ import matplotlib.pyplot as plt
 
 #time_interval is a sixteenth note
 
+#set distance parameter to be sixteenth note. 
+
 def plot(left_bound, right_bound, y, peak_pos, height):
     x = np.linspace(left_bound, right_bound, len(y))
     fig = plt.figure()
     ax = fig.subplots()
     ax.plot(x,y)
-    print("\n\nISSUE HERE!\n")
     ax.scatter(peak_pos, height, color = 'r', s = 15, marker = 'D', label = 'Maxima')
     ax.legend()
     ax.grid()
@@ -23,7 +24,7 @@ def plot_time(audio_data, audio_length, samples):
 
 def rhythm(audio_file):
     sampling_rate, audio_data = wavfile.read("../audios/C-scale.wav")
-    print(audio_data)
+    max_amplitude = np.max(np.abs(audio_data))
     time_interval = sampling_rate // 8
     samples = len(audio_data)
     audio_length = samples // sampling_rate
@@ -35,23 +36,18 @@ def rhythm(audio_file):
         left_bound = i
         right_bound = i + time_interval
         signal = audio_data[left_bound:right_bound]
-        localPeaks = find_peaks(signal, height=1, threshold=1, distance=1) #TODO: what parameters should we use for finding the peaks.
-        height = localPeaks[1]['peak_heights']
-        peak_pos = signal[localPeaks[0]]
-
-        # Plot for testing.
-        if i == 0:
-            plot(left_bound, right_bound, signal, peak_pos, height)
+        localPeaksX, localPeaksInfo = find_peaks(signal, distance=time_interval)
+        # print(localPeaksX)
+        # print(localPeaksInfo)
+        # print()
 
         # Append a 1 if there is a peak, 0 otherwise.
-        if len(localPeaks) > 0:
+        if len(localPeaksX) > 0:
             peaks.append(1)
         else:
             peaks.append(0)
-
-       #time = np.linspace(start=0, stop=time_interval, num=1) #TODO: not sure about num/samples parameter.
-       #plt.plot(time, signal)
-    print(peaks)
+    print(f"peaks: {peaks}")
+    return peaks
 
 if __name__ == "__main__":
     audio_file = "audio_files/C scale.m4a"
