@@ -3,9 +3,8 @@ from scipy.io import wavfile
 import numpy as np
 import matplotlib.pyplot as plt
 
+found = 1
 #time_interval is a sixteenth note
-
-#set distance parameter to be sixteenth note. 
 
 def plot(left_bound, right_bound, y, peak_pos, height):
     x = np.linspace(left_bound, right_bound, len(y))
@@ -43,9 +42,9 @@ def rhythm(audio_file):
 
         # Append a 1 if there is a peak, 0 otherwise.
         if len(localPeaksX) > 0:
-            peaks.append(1)
+            peaks.append(found)
         else:
-            peaks.append(0)
+            peaks.append(not found)
     print(f"peaks: {peaks}")
     return peaks
 
