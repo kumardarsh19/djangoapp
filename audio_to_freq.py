@@ -124,14 +124,13 @@ def gaussWindow(signal, windowsize, starti):
             segment[i] = 0;
     
     
-    plt.show()
     
     return segment.reshape(signal.shape);
 
 
     return np.array(ret).reshape(size(signal));
 
-def getNoteList(fileName):
+def getNoteList(fileName, plot=False):
     notes = []
 
     sample_rate, time_domain_sig = wavfile.read("audios/C-scale.wav")
@@ -151,19 +150,25 @@ def getNoteList(fileName):
     
     for i in range(0, num_samples, sixteenth*2):
         segment = segmentSignal(time_domain_sig, sixteenth, i);
-        seg2 = gaussWindow(time_domain_sig, sixteenth, i);
+
         assert(segment.shape == time_domain_sig.shape)
         if np.amax(segment) < 0.15: continue
 
+
+        if (plot):
+            plt.plot(time_domain_sig);
+            plt.plot(segment);
+            
+            plt.show()
+
         freq_domain_sig = np.abs(fft(segment))
 
-        freq2 = np.abs(fft(seg2));
+
         max = np.amax(freq_domain_sig[0: 8000])
         maxi = np.where(freq_domain_sig[0:8000] == max)[0]
 
 
-        max2 = np.amax(freq2[0:8000]);
-        maxi2 = np.where(freq2[0:8000] == max2)[0];
+
 
 
         maxout = maxi;
