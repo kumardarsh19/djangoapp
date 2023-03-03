@@ -108,38 +108,76 @@ def segmentSignal(signal, sixteenth, starti):
         segment[i] = segment[i] * ((i > starti) and (i < starti+sixteenth));
     return segment
 
+
+
+def gaussWindow(signal, windowsize, starti):
+    segment = np.copy(signal);
+    endi = starti + windowsize;
+    window = windows.gaussian(windowsize, std= windowsize // 2, sym=True).reshape(-1,);
+    
+    
+
+    for i in range(len(signal)):
+        if i >= starti and i < endi:
+            segment[i] *= window[i-starti];
+        else:
+            segment[i] = 0;
+    
+    
+    plt.show()
+    
+    return segment.reshape(signal.shape);
+
+
+    return np.array(ret).reshape(size(signal));
+
 def getNoteList(fileName):
     notes = []
 
     sample_rate, time_domain_sig = wavfile.read("audios/C-scale.wav")
-   
+    
+    time_domain_sig = time_domain_sig.reshape(-1,)
     time_domain_sig = time_domain_sig / np.amax(time_domain_sig)
 
     num_samples = len(time_domain_sig)
     clip_len = num_samples // sample_rate
     onesec = sample_rate
-    sixteenth = onesec // 4
+    sixteenth = onesec // 8;
     df = sample_rate / num_samples
     time_ax = np.linspace(0, clip_len, num_samples)
     freq_ax = np.linspace(0, df * (num_samples - 1), num_samples)
 
+    overlap = 0
     
-    for i in range(0, num_samples, sixteenth):
-        segment = segmentSignal(time_domain_sig, sixteenth, i)
-
+    for i in range(0, num_samples, sixteenth*2):
+        segment = segmentSignal(time_domain_sig, sixteenth, i);
+        seg2 = gaussWindow(time_domain_sig, sixteenth, i);
+        assert(segment.shape == time_domain_sig.shape)
         if np.amax(segment) < 0.15: continue
 
-        freq_domain_sig = fft(segment)
+        freq_domain_sig = np.abs(fft(segment))
 
+        freq2 = np.abs(fft(seg2));
         max = np.amax(freq_domain_sig[0: 8000])
         maxi = np.where(freq_domain_sig[0:8000] == max)[0]
-        print(maxi)
 
-        print("Note detected at ", freq_ax[maxi])
 
-        num_semitones = int(12 * math.log2(freq_ax[maxi] / A4))
+        max2 = np.amax(freq2[0:8000]);
+        maxi2 = np.where(freq2[0:8000] == max2)[0];
+
+
+        maxout = maxi;
+
+        
+        
+        
+
+        #print("Note detected at ", freq_ax[maxout])
+        
+        
+        num_semitones = round(12 * math.log2(freq_ax[maxout] / A4))
         note = LNOTES[num_semitones % 12]
-        print(note)
+        #print(note)
 
         notes.append(note)
 
@@ -158,7 +196,7 @@ def getNoteGraph(fileName, plot=True):
     time_ax = np.linspace(0, clip_len, num_samples)
     freq_ax = np.linspace(0, df * (num_samples - 1), num_samples)
 
-    segment = segmentSignal(time_domain_sig, sixteenth, int(sample_rate * 2.5))
+    segment = gaussWindow(time_domain_sig, sixteenth, int(sample_rate * 2.5))
 
     freq_domain_sig = fft(segment)
 
@@ -168,25 +206,30 @@ def getNoteGraph(fileName, plot=True):
 
     print("Note detected at ", freq_ax[maxi])
 
-    num_semitones = int(12 * math.log2(freq_ax[maxi] / A4))
-    print(LNOTES[num_semitones % 12])
+    num_semitones = (12 * math.log2(freq_ax[maxi] / A4))
+    print(LNOTES[int(num_semitones % 13)])
 
     if plot:
 
-        plt.subplot(3, 1, 1)
+        plt.subplot(4, 1, 1)
         plt.plot(time_ax, time_domain_sig)
         plt.title("Original Signal")
         plt.xlim([0, clip_len])
 
-        plt.subplot(3, 1, 2)
+        plt.subplot(4, 1, 2)
+        plt.plot(windows.gaussian(sixteenth, std=sixteenth//50))
+
+        plt.subplot(4, 1, 3)
         plt.plot(time_ax, segment)
         plt.title("Segmented Signal")
         plt.xlim([0, clip_len])
 
-        plt.subplot(3, 1, 3)    
+        plt.subplot(4, 1, 4)    
         plt.plot(freq_ax, abs(freq_domain_sig))
         plt.title("Frequency Domain")
         plt.xlim([200, 600])
+
+
         plt.show()
 
 
