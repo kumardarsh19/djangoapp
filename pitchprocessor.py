@@ -6,7 +6,7 @@ from IPython.display import clear_output
 from scipy.fftpack import fft, fftshift
 from scipy.signal import *
 import sklearn
-import preprocessing;
+from preprocessing import normalize;
 
 LOW_THRESHOLD = 2e-4
 HIGH_THRESHOLD = 0.7
@@ -30,8 +30,7 @@ NOTES = {
 }
 
 
-def normalize(signal):
-    return signal / np.amax(signal);
+
 
 def segmentSignal(signal, sixteenth, starti):
     segment = np.copy(signal);
@@ -63,8 +62,7 @@ def getNoteList(fileName, plot=False):
 
     sample_rate, time_domain_sig = wavfile.read("audios/C-scale.wav")
     
-    time_domain_sig = time_domain_sig.reshape(-1,)
-    time_domain_sig = time_domain_sig / np.amax(time_domain_sig)
+    time_domain_sig = normalize(time_domain_sig);
 
     num_samples = len(time_domain_sig)
     clip_len = num_samples // sample_rate
@@ -107,7 +105,7 @@ def getNoteList(fileName, plot=False):
 
         #print("Note detected at ", freq_ax[maxout])
         
-        
+        if (freq_ax[maxout] == 0): continue;
         num_semitones = round(12 * math.log2(freq_ax[maxout] / A4))
         note = LNOTES[num_semitones % 12]
         #print(note)
