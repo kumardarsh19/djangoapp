@@ -15,7 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from pitchapp.views import home_view, return_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', home_view),
+    path('return/', return_view),
 ]
