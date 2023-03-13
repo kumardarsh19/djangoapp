@@ -1,5 +1,61 @@
 
 
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vexflow/build/cjs/vexflow.js"></script>    
+    <script type="text/javascript">
+        
+        const { Factory, EasyScore, System } = Vex.Flow;
+
+        function L(...args) {
+            if (Factory.DEBUG)
+                    log('Vex.Flow.Factory', args);
+        }
+        
+        class Fac2 extends Factory {
+            constructor(options = {}) {
+                super(options);
+                L('New factory: ', options);
+                this.options = {
+                    stave: {
+                        space: 10,
+                    },
+                    renderer: {
+                        elementId: 'output',
+                        width: 500,
+                        height: 200,
+                        background: '#FFF',
+                    },
+                    font: Factory.TEXT_FONT,
+                };
+                this.setOptions(options);
+            }
+        }
+
+        const vf = new Fac2({
+        renderer: { elementId: "output", width: 500, height: 200 },
+        });
+
+        
+    
+        const score = vf.EasyScore();
+        const system = vf.System();
+    
+        system
+        .addStave({
+            voices: [
+            score.voice(score.notes('C#5/q, B4, A4, G#4', { stem: 'up' })),
+            score.voice(score.notes('C#4/h, C#4', { stem: 'down' })),
+            ],
+        })
+        .addClef('treble')
+        .addTimeSignature('4/4');
+    
+        vf.draw();
+        
+    </script>
+    
+</head>
+
 <form method="POST" enctype="multipart/form-data" >
     {% csrf_token %}
     {{ form.as_p }}
@@ -8,10 +64,17 @@
     <input type="submit" value="Submit">
 </form>
 
-<div id="notebox">
+<body>
 
-    {%if notes %}
-        {{notes}}
-    {% endif %}
+    <div id="notebox" >
 
-</div>
+        {%if notes %}
+            {{notes}}
+        {% endif %}
+    
+    </div>
+    <div id="ouput"></div>
+</body>
+
+
+

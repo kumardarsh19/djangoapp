@@ -6,7 +6,7 @@ from pitchprocessor import getNoteList;
 def home_view(request):
     if request.POST:
         context = {};
-        data = request.FILES;
+       
         
         file = request.FILES.get('filen');
         context['notes'] = getNoteList(file.name);
