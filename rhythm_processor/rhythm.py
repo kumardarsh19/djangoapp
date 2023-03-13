@@ -2,6 +2,7 @@ from scipy.signal import find_peaks
 from scipy.io import wavfile
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
 found = 1
 not_found = 0
@@ -29,10 +30,11 @@ def rhythm(audio_file):
     samples = len(audio_data)
     audio_length = samples // sampling_rate
     peaks = []
-    print(audio_data)
-    print(f"\n\taudio_length: {audio_length}\n\tsamples: {samples}\n\tsampling_rate: {sampling_rate}\n\ttime_interval: {time_interval}")
-    plot_time(audio_data, audio_length, samples)
 
+    #print(audio_data)
+    #print(f"\n\taudio_length: {audio_length}\n\tsamples: {samples}\n\tsampling_rate: {sampling_rate}\n\ttime_interval: {time_interval}")
+    #plot_time(audio_data, audio_length, samples)
+    start_time = time.time()
     for i in np.arange(0, samples, time_interval):
         left_bound = i
         right_bound = i + time_interval
@@ -45,6 +47,8 @@ def rhythm(audio_file):
         else:
             peaks.append(not_found)
     print(f"peaks: {peaks}")
+    print("--- %s seconds ---" % (time.time() - start_time))
+
     return peaks
 
 if __name__ == "__main__":
