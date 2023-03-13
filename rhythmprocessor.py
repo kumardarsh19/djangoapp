@@ -3,6 +3,7 @@ from scipy.io import wavfile
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+from preprocessing import normalize;
 
 found = 1
 not_found = 0
@@ -24,7 +25,8 @@ def plot_time(audio_data, audio_length, samples):
     plt.show()
 
 def rhythm(audio_file):
-    sampling_rate, audio_data = wavfile.read("../audios/C-scale.wav")
+    sampling_rate, audio_data = wavfile.read("audios/C-scale.wav")
+    aduio_data = normalize(audio_data)
     max_amplitude = np.max(np.abs(audio_data))
     time_interval = sampling_rate // 8
     samples = len(audio_data)
