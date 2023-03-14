@@ -3,7 +3,11 @@ import numpy as np
 
 THRESHOLD = 0.15;
 
-
+'''
+Reshape to 1-D array (if not already)
+Divide every sample by the max value
+Apply threshold to each sample
+'''
 def normalize(signal):
     signal = signal.reshape(-1,);
     signal = signal / np.amax(signal);
