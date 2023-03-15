@@ -31,7 +31,10 @@ NOTES = {
 
 
 
-
+'''
+Apply rectangular window of size sixteenth to signal
+starting at index starti
+'''
 def segmentSignal(signal, sixteenth, starti):
     segment = np.copy(signal);
     for i in range(len(signal)):
@@ -39,7 +42,11 @@ def segmentSignal(signal, sixteenth, starti):
     return segment
 
 
-
+'''
+Apply gaussian window of size windowsize
+starting at index starti
+window has standard of deviation of windowsize // 2
+'''
 def gaussWindow(signal, windowsize, starti):
     segment = np.copy(signal);
     endi = starti + windowsize;
@@ -62,11 +69,17 @@ def getPitchList(fileName, plot=False):
 
     sample_rate, time_domain_sig = wavfile.read("audios/C-scale.wav")
     
+    #Normalize method from preprocessing.py
     time_domain_sig = normalize(time_domain_sig);
 
+
+    
     num_samples = len(time_domain_sig)
     clip_len = num_samples // sample_rate
     onesec = sample_rate
+
+    #determines size of window as 1/8 of a second
+    #currently assuming 60 bpm
     sixteenth = onesec // 8;
     df = sample_rate / num_samples
     time_ax = np.linspace(0, clip_len, num_samples)
@@ -74,30 +87,37 @@ def getPitchList(fileName, plot=False):
 
     overlap = 0
     
+    #Apply window over signal ~16 times
     for i in range(0, num_samples, sixteenth*2):
         segment = segmentSignal(time_domain_sig, sixteenth, i);
 
         assert(segment.shape == time_domain_sig.shape)
+
+        #pass over negligible segments
+        #may be changed later to consider rests
         if np.amax(segment) < 0.15: continue
 
 
+        #If you want to see the graph with segment 
+        #highlighted every iteration
         if (plot):
             plt.plot(time_domain_sig);
             plt.plot(segment);
-            
             plt.show()
 
         freq_domain_sig = np.abs(fft(segment))
 
-
         max = np.amax(freq_domain_sig[0: 8000])
         maxi = np.where(freq_domain_sig[0:8000] == max)[0]
-
         maxout = maxi;
 
         #print("Note detected at ", freq_ax[maxout])
         
+
+        #Ensures we don't take logarithm of 0
         if (freq_ax[maxout] == 0): continue;
+
+        #Apply standard formula to determine number of steps away from A
         num_semitones = round(12 * math.log2(freq_ax[maxout] / A4))
         note = LNOTES[num_semitones % 12]
         #print(note)
@@ -107,6 +127,8 @@ def getPitchList(fileName, plot=False):
 
     return notes;
 
+
+#For visualizing signals
 def getNoteGraph(fileName, plot=True):
 
     sample_rate, time_domain_sig = wavfile.read("audios/C-scale.wav")
