@@ -1,59 +1,9 @@
 
-
+<!DOCTYPE html>
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/vexflow/build/cjs/vexflow.js"></script>    
-    <script type="text/javascript">
-        
-        const { Factory, EasyScore, System } = Vex.Flow;
+    {% load static %}
 
-        function L(...args) {
-            if (Factory.DEBUG)
-                    log('Vex.Flow.Factory', args);
-        }
-        
-        class Fac2 extends Factory {
-            constructor(options = {}) {
-                super(options);
-                L('New factory: ', options);
-                this.options = {
-                    stave: {
-                        space: 10,
-                    },
-                    renderer: {
-                        elementId: 'output',
-                        width: 500,
-                        height: 200,
-                        background: '#FFF',
-                    },
-                    font: Factory.TEXT_FONT,
-                };
-                this.setOptions(options);
-            }
-        }
 
-        const vf = new Fac2({
-        renderer: { elementId: "output", width: 500, height: 200 },
-        });
-
-        
-    
-        const score = vf.EasyScore();
-        const system = vf.System();
-    
-        system
-        .addStave({
-            voices: [
-            score.voice(score.notes('C#5/q, B4, A4, G#4', { stem: 'up' })),
-            score.voice(score.notes('C#4/h, C#4', { stem: 'down' })),
-            ],
-        })
-        .addClef('treble')
-        .addTimeSignature('4/4');
-    
-        vf.draw();
-        
-    </script>
-    
 </head>
 
 <form method="POST" enctype="multipart/form-data" >
@@ -73,8 +23,34 @@
         {% endif %}
     
     </div>
-    <div id="ouput"></div>
+    <div id="boo"></div>
 </body>
 
+<script>
+    var path = "/static/vexflow/src/vex.ts";
+</script>
+
+<script src="https://unpkg.com/vexflow@4.1.0/build/cjs/vexflow-debug.js"></script>
+
+<script>
+    const vf = new Vex.Flow.Factory({
+      renderer: { elementId: "boo", width: 500, height: 200 }
+    });
+  
+    const score = vf.EasyScore();
+    const system = vf.System();
+  
+    system
+      .addStave({
+        voices: [
+          score.voice(score.notes("C#5/q, B4, A4, G#4", { stem: "up" })),
+          score.voice(score.notes("C#4/h, C#4", { stem: "down" }))
+        ]
+      })
+      .addClef("treble")
+      .addTimeSignature("4/4");
+  
+    vf.draw();
+  </script>
 
 

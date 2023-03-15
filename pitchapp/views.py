@@ -10,6 +10,8 @@ def home_view(request):
         
         file = request.FILES.get('filen');
         context['notes'] = getNoteList(file.name);
+        #integrate rhythm and pitch processsors
+        #generate the Models and Forms
         return render(request, 'home.html', context);
     
     return render(request, "home.html");

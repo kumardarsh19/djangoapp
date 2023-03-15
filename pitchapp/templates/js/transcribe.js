@@ -1,4 +1,3 @@
-
 import { Vex, Stave, StaveNote, Formatter } from "vexflow";
 import { JSDOM } from "jsdom";
 import { jsPDF } from "jspdf";
@@ -12,8 +11,13 @@ global.window = dom.window;
 global.document = dom.window.document;
 
 // Create an SVG renderer and attach it to the DIV element named "vf".
-const div = document.getElementById("notebox");
+const div = document.getElementById("vf");
 const renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
+
+// Configure the rendering context.
+renderer.resize(200, 200);
+const context = renderer.getContext();
+context.setFont("Arial", 10);
 
 const stave = new Stave(10, 0, 190);
 
@@ -23,44 +27,18 @@ stave.addClef("treble").addTimeSignature("4/4");
 // Connect it to the rendering context and draw!
 stave.setContext(context).draw();
 
-function writeNotes(notelist) {
+const notes = [
+    new StaveNote({ keys: ["c/4"], duration: "q" }),
+    new StaveNote({ keys: ["d/4"], duration: "q" }),
+    new StaveNote({ keys: ["b/4"], duration: "qr" }),
+    new StaveNote({ keys: ["c/4", "e/4", "g/4"], duration: "q" }),
+];
 
-    let notes = [];
+// Helper function to justify and draw a 4/4 voice.
+Formatter.FormatAndDraw(context, stave, notes);
 
-    for (let i=0; i<notelist.length; i++) {
-        curr = new StaveNote({keys: [notelist[i]], duration: "q"});
-        notes[i] = curr;
-    }
+const doc = new jsPDF();
+const svgElement = div.childNodes[0];
+doc.svg(svgElement).then(() => doc.save("score.pdf"));
 
-    // Helper function to justify and draw a 4/4 voice.
-    Formatter.FormatAndDraw(context, stave, notes);
-
-    const doc = new jsPDF();
-    const svgElement = div.childNodes[0];
-    doc.svg(svgElement).then(() => doc.save("score.pdf"));
-
-    console.log("Saved score.pdf");
-
-    /** 
-    console.log("VexFlow Build:", Vex.Flow.BUILD);
-
-
-    const { Factory } = Vex.Flow;
-
-    const factory = new Factory({
-        renderer: { elementId: "output", width: 500, height: 200 },
-    });
-
-    const score = factory.EasyScore();
-
-    factory
-        .System()
-        .addStave({
-            voices: [score.voice(score.notes("C#5/q, B4, A4, G#4", { stem: "up" })), score.voice(score.notes("C#4/h, C#4", { stem: "down" }))],
-        })
-        .addClef("treble")
-        .addTimeSignature("4/4");
-    factory.draw();
-    */
-
-}
+console.log("Saved score.pdf");
