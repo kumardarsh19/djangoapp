@@ -1,26 +1,32 @@
 from django.shortcuts import render
-from .forms import audioForm;
-from pitchprocessor import getNoteList;
+from pitchprocessor import getPitchList
+from rhythmprocessor import getOnsetList
+from integrator import getNoteList
+from .forms import AudioForm
+
 # Create your views here.
 
 def home_view(request):
-    if request.POST:
-        context = {};
-       
-        
-        file = request.FILES.get('filen');
-        context['notes'] = getNoteList(file.name);
-        #integrate rhythm and pitch processsors
-        #generate the Models and Forms
-        return render(request, 'home.html', context);
+    print("IN HOME VIEW!")
+    context = {}
+    if request.method == 'POST':
+        print("IN POST!")
+        file = request.FILES.get('file')
+        context['notes'] = getPitchList(file.name)
+        context['form'] = AudioForm()
+        return render(request, 'home.html', context)
+    context['form'] = AudioForm()
+    return render(request, "home.html", context)
     
-    return render(request, "home.html");
 
 def return_view(request):
-    context = {};
-    data = request.FILES;
+    context = {}
+    data = request.FILES
     
-    file = request.FILES.get('filen');
-    context['notes'] = getNoteList(file.name);
+    file = request.FILES.get('filen')
+    clef = request.get('clef') # TODO: GET CLEF FROM FORM.
+    notesPitches = getPitchList(file.name)
+    notesOnsets = getOnsetList(file.name)
+    context['notes'] = getNoteList(notesPitches, notesOnsets, clef)
 
-    return render(request, "return.html", context);
+    return render(request, "return.html", context)

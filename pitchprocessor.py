@@ -61,10 +61,10 @@ def gaussWindow(signal, windowsize, starti):
 
     return segment.reshape(signal.shape);
 
-'''
-Main function used for getting note list in views.py currently
-'''
-def getNoteList(fileName, plot=False):
+
+    return np.array(ret).reshape(size(signal));
+
+def getPitchList(fileName, plot=False):
     notes = []
 
     sample_rate, time_domain_sig = wavfile.read("audios/C-scale.wav")
