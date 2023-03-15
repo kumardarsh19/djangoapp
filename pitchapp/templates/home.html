@@ -6,12 +6,11 @@
 
 </head>
 
-<form method="POST" enctype="multipart/form-data" >
+<form enctype="multipart/form-data" method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <label for="myfile">Select a file:</label>
-    <input type="file" id="myfile" name="filen">
-    <input type="submit" value="Submit">
+    <table>
+        {{form}}
+    </table>
 </form>
 
 <body>
