@@ -57,7 +57,7 @@ def gaussWindow(signal, windowsize, starti):
 
     return np.array(ret).reshape(size(signal));
 
-def getNoteList(fileName, plot=False):
+def getPitchList(fileName, plot=False):
     notes = []
 
     sample_rate, time_domain_sig = wavfile.read("audios/C-scale.wav")
@@ -93,15 +93,7 @@ def getNoteList(fileName, plot=False):
         max = np.amax(freq_domain_sig[0: 8000])
         maxi = np.where(freq_domain_sig[0:8000] == max)[0]
 
-
-
-
-
         maxout = maxi;
-
-        
-        
-        
 
         #print("Note detected at ", freq_ax[maxout])
         

@@ -24,7 +24,7 @@ def plot_time(audio_data, audio_length, samples):
     plt.plot(time, audio_data)
     plt.show()
 
-def rhythm(audio_file):
+def getOnsetList(audio_file):
     sampling_rate, audio_data = wavfile.read("audios/C-scale.wav")
     aduio_data = normalize(audio_data)
     max_amplitude = np.max(np.abs(audio_data))

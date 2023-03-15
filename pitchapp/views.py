@@ -1,20 +1,22 @@
 from django.shortcuts import render
-from .forms import audioForm
 from pitchprocessor import getPitchList
 from rhythmprocessor import getOnsetList
 from integrator import getNoteList
+from .forms import AudioForm
 
 # Create your views here.
 
 def home_view(request):
-    if request.POST:
-        context = {};
-       
-        file = request.FILES.get('filen')
+    print("IN HOME VIEW!")
+    context = {}
+    if request.method == 'POST':
+        print("IN POST!")
+        file = request.FILES.get('file')
         context['notes'] = getPitchList(file.name)
+        context['form'] = AudioForm()
         return render(request, 'home.html', context)
-    
-    return render(request, "home.html")
+    context['form'] = AudioForm()
+    return render(request, "home.html", context)
 
 def return_view(request):
     context = {}
