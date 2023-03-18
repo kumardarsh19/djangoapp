@@ -6,7 +6,7 @@ from IPython.display import clear_output
 from scipy.fftpack import fft, fftshift
 from scipy.signal import *
 import sklearn
-from audioprocessing.preprocessing import normalize
+from preprocessing import normalize
 
 LOW_THRESHOLD = 2e-4
 HIGH_THRESHOLD = 0.7
@@ -67,7 +67,7 @@ def gaussWindow(signal, windowsize, starti):
 def getPitchList(fileName, plot=False):
     notes = []
 
-    sample_rate, time_domain_sig = wavfile.read("audios/C-scale.wav")
+    sample_rate, time_domain_sig = wavfile.read("audios/C-note.wav")
     
     #Normalize method from preprocessing.py
     time_domain_sig = normalize(time_domain_sig)

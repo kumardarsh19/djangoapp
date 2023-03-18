@@ -13,5 +13,4 @@ def normalize(signal):
     signal = signal / np.amax(signal)
     for i in range(len(signal)):
         if np.abs(signal[i]) < THRESHOLD: signal[i] = 0
-
     return signal
