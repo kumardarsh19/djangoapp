@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'pitchapp',
     'webapp',
 ]
 
@@ -61,7 +60,7 @@ ROOT_URLCONF = 'webapp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['pitchapp/templates/'],
+        'DIRS': ['musictranscribe/templates/'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

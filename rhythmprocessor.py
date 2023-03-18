@@ -41,7 +41,9 @@ def getOnsetList(audio_file):
         left_bound = i
         right_bound = i + time_interval
         signal = audio_data[left_bound:right_bound]
-        localPeaksX, localPeaksInfo = find_peaks(signal, distance=time_interval, height=onset_height)
+        localPeaksX, localPeaksInfo = find_peaks(signal, 
+                                                 distance=time_interval, 
+                                                 height=onset_height)
 
         # Append a 1 if there is a peak, 0 otherwise.
         if len(localPeaksX) > 0:

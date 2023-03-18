@@ -1,4 +1,4 @@
-from pitchapp.models import Note
+from musictranscribe.models import Note
 
 def getNoteList(pitches, onsets, clef):
     # Iterate through the lists at the same time.
