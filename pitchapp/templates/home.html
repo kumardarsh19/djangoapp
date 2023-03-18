@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<head>
+    {% load static %}
+
+
+</head>
+
+<form enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    <table>
+        {{form.as_p}}
+    </table>
+
+    <input type="submit" value="Submit">
+
+    
+</form>
+
+<body>
+
+    <div id="notebox" >
+
+        {%if notes %}
+            {{notes}}
+        {% endif %}
+    
+    </div>
+    <div id="output"></div>
+</body>
+
+<script>
+    var path = "/static/vexflow/src/vex.ts";
+</script>
+
+<script src="https://unpkg.com/vexflow@4.1.0/build/cjs/vexflow-debug.js"></script>
+
+<script>
+
+    const { Renderer, Stave, StaveNote } = Vex.Flow;
+
+    // Create an SVG renderer and attach it to the DIV element named "boo".
+    const div = document.getElementById("output");
+    const renderer = new Renderer(div, Renderer.Backends.SVG);
+
+    // Configure the rendering context.
+    renderer.resize(500, 500);
+    const context = renderer.getContext();
+
+    // Create a stave of width 400 at position 10, 40 on the canvas.
+    const stave = new Stave(10, 40, 400);
+
+    // Add a clef and time signature.
+    stave.addClef("treble").addTimeSignature("4/4");
+
+    // Connect it to the rendering context and draw!
+    stave.setContext(context).draw();
+
+    function writeNotes(notelist) {
+
+        let notes = [];
+
+        for (let i=0; i<notelist.length; i++) {
+            curr = new StaveNote({keys: [notelist[i]], duration: "q"});
+            notes[i] = curr;
+        }
+
+        return notes;
+
+    }
+
+    
+    notes = writeNotes("{{notes}}");
+
+    // Create a voice in 4/4 and add above notes
+    const voice = new Voice({ num_beats: 4, beat_value: 4 });
+    voice.addTickables(notes);
+
+    // Format and justify the notes to 400 pixels.
+    new Formatter().joinVoices([voice]).format([voice], 350);
+
+    // Render voice
+    voice.draw(context, stave);
+  </script>
+
+  <script src="{% static 'js/transcribe.js' %}">
+
+  </script>
+
+
