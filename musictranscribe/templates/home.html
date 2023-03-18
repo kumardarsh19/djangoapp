@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<head>
+    {% load static %}
+
+
+</head>
+
+<form enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    <table>
+        {{form.as_p}}
+    </table>
+
+    <input type="submit" value="Submit">
+
+    
+</form>
+
+<body>
+
+    <div id="notebox" >
+
+        {%if notes %}
+            {{notes}}
+        {% endif %}
+    
+    </div>
+    <div id="boo"></div>
+</body>
+
+<script>
+    var path = "/static/vexflow/src/vex.ts";
+</script>
+
+<script src="https://unpkg.com/vexflow@4.1.0/build/cjs/vexflow-debug.js"></script>
+
+<script>
+    const vf = new Vex.Flow.Factory({
+      renderer: { elementId: "boo", width: 500, height: 200 }
+    });
+  
+    const score = vf.EasyScore();
+    const system = vf.System();
+  
+    system
+      .addStave({
+        voices: [
+          score.voice(score.notes("C#5/q, B4, A4, G#4", { stem: "up" })),
+          score.voice(score.notes("C#4/h, C#4", { stem: "down" }))
+        ]
+      })
+      .addClef("treble")
+      .addTimeSignature("4/4");
+  
+    vf.draw();
+  </script>
+
+
