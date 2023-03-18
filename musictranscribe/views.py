@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from pitchprocessor import getPitchList
-from rhythmprocessor import getOnsetList
-from integrator import getNoteList
+from audioprocessing.pitchprocessor import getPitchList
+from audioprocessing.rhythmprocessor import getOnsetList
+from audioprocessing.integrator import getNoteList
 from .forms import AudioForm
 
 # Create your views here.

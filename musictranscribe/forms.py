@@ -1,5 +1,5 @@
 from django import forms;
-from pitchprocessor import getPitchList;
+from audioprocessing.pitchprocessor import getPitchList;
 
 class AudioForm(forms.Form):
     file = forms.FileField(label='Upload an audio file')

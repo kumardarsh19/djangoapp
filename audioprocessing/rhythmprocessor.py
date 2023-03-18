@@ -3,7 +3,7 @@ from scipy.io import wavfile
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-from preprocessing import normalize;
+from audioprocessing.preprocessing import normalize;
 
 found = 1
 not_found = 0
@@ -24,9 +24,34 @@ def plot_time(audio_data, audio_length, samples):
     plt.plot(time, audio_data)
     plt.show()
 
+#detect_beats_channels detects if there is a sound at a specific window for
+# an audio containing more than one channel.
+def detect_beats_channels(audio_data) -> np.array:
+    try:
+        if len(audio_data) > 1:
+            beats = []
+            data_length = len(audio_data)
+            channel_length = len(audio_data[0])
+            for data in range(data_length):
+                beat_found = False
+                for channel in range(channel_length):
+                    if audio_data[data][channel] == 1:
+                        beat_found = True
+                if beat_found:
+                    beats.append(1)
+                else:
+                    beats.append(0)
+            print("New beats\n")
+            return np.array(beats)
+    except:
+        print("Same beats\n")
+        return audio_data
+
 def getOnsetList(audio_file):
+    #TODO: If wavfile.read returns 2D array, this code will not work.
     sampling_rate, audio_data = wavfile.read("audios/C-scale.wav")
-    aduio_data = normalize(audio_data)
+    audio_data = detect_beats_channels(audio_data)
+    audio_data = normalize(audio_data)
     max_amplitude = np.max(np.abs(audio_data))
     time_interval = sampling_rate // 8
     samples = len(audio_data)
@@ -50,11 +75,11 @@ def getOnsetList(audio_file):
             peaks.append(found)
         else:
             peaks.append(not_found)
-    print(f"peaks: {peaks}")
-    print("--- %s seconds ---" % (time.time() - start_time))
+    print(f"\n{peaks}")
+    print("\n\n--- %s seconds ---" % (time.time() - start_time))
 
     return peaks
 
 if __name__ == "__main__":
     audio_file = "audio_files/C scale.m4a"
-    rhythm(audio_file)
+    getOnsetList(audio_file)

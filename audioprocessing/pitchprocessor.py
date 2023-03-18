@@ -6,7 +6,7 @@ from IPython.display import clear_output
 from scipy.fftpack import fft, fftshift
 from scipy.signal import *
 import sklearn
-from preprocessing import normalize;
+from audioprocessing.preprocessing import normalize
 
 LOW_THRESHOLD = 2e-4
 HIGH_THRESHOLD = 0.7
@@ -36,9 +36,9 @@ Apply rectangular window of size sixteenth to signal
 starting at index starti
 '''
 def segmentSignal(signal, sixteenth, starti):
-    segment = np.copy(signal);
+    segment = np.copy(signal)
     for i in range(len(signal)):
-        segment[i] = segment[i] * ((i > starti) and (i < starti+sixteenth));
+        segment[i] = segment[i] * ((i > starti) and (i < starti+sixteenth))
     return segment
 
 
@@ -48,21 +48,21 @@ starting at index starti
 window has standard of deviation of windowsize // 2
 '''
 def gaussWindow(signal, windowsize, starti):
-    segment = np.copy(signal);
-    endi = starti + windowsize;
-    window = windows.gaussian(windowsize, std= windowsize // 2, sym=True).reshape(-1,);
+    segment = np.copy(signal)
+    endi = starti + windowsize
+    window = windows.gaussian(windowsize, std= windowsize // 2, sym=True).reshape(-1,)
     
     for i in range(len(signal)):
         if i >= starti and i < endi:
-            segment[i] *= window[i-starti];
+            segment[i] *= window[i-starti]
         else:
-            segment[i] = 0;
+            segment[i] = 0
     
 
-    return segment.reshape(signal.shape);
+    return segment.reshape(signal.shape)
 
 
-    return np.array(ret).reshape(size(signal));
+    return np.array(ret).reshape(size(signal))
 
 def getPitchList(fileName, plot=False):
     notes = []
@@ -70,7 +70,7 @@ def getPitchList(fileName, plot=False):
     sample_rate, time_domain_sig = wavfile.read("audios/C-scale.wav")
     
     #Normalize method from preprocessing.py
-    time_domain_sig = normalize(time_domain_sig);
+    time_domain_sig = normalize(time_domain_sig)
 
 
     
@@ -80,7 +80,7 @@ def getPitchList(fileName, plot=False):
 
     #determines size of window as 1/8 of a second
     #currently assuming 60 bpm
-    sixteenth = onesec // 8;
+    sixteenth = onesec // 8
     df = sample_rate / num_samples
     time_ax = np.linspace(0, clip_len, num_samples)
     freq_ax = np.linspace(0, df * (num_samples - 1), num_samples)
@@ -89,7 +89,7 @@ def getPitchList(fileName, plot=False):
     
     #Apply window over signal ~16 times
     for i in range(0, num_samples, sixteenth*2):
-        segment = segmentSignal(time_domain_sig, sixteenth, i);
+        segment = segmentSignal(time_domain_sig, sixteenth, i)
 
         assert(segment.shape == time_domain_sig.shape)
 
@@ -101,21 +101,21 @@ def getPitchList(fileName, plot=False):
         #If you want to see the graph with segment 
         #highlighted every iteration
         if (plot):
-            plt.plot(time_domain_sig);
-            plt.plot(segment);
+            plt.plot(time_domain_sig)
+            plt.plot(segment)
             plt.show()
 
         freq_domain_sig = np.abs(fft(segment))
 
         max = np.amax(freq_domain_sig[0: 8000])
         maxi = np.where(freq_domain_sig[0:8000] == max)[0]
-        maxout = maxi;
+        maxout = maxi
 
         #print("Note detected at ", freq_ax[maxout])
         
 
         #Ensures we don't take logarithm of 0
-        if (freq_ax[maxout] == 0): continue;
+        if (freq_ax[maxout] == 0): continue
 
         #Apply standard formula to determine number of steps away from A
         num_semitones = round(12 * math.log2(freq_ax[maxout] / A4))
@@ -125,7 +125,7 @@ def getPitchList(fileName, plot=False):
         notes.append(note)
 
 
-    return notes;
+    return notes
 
 
 #For visualizing signals
@@ -178,5 +178,5 @@ def getNoteGraph(fileName, plot=True):
         plt.show()
 
 
-    return None;
+    return None
 
