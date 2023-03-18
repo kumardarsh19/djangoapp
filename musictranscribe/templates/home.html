@@ -17,7 +17,7 @@
     
 </form>
 
-<body>
+
 
     <div id="notebox" >
 
@@ -26,8 +26,11 @@
         {% endif %}
     
     </div>
-    <div id="boo"></div>
-</body>
+    
+    
+
+    
+
 
 <script>
     var path = "/static/vexflow/src/vex.ts";
@@ -35,25 +38,69 @@
 
 <script src="https://unpkg.com/vexflow@4.1.0/build/cjs/vexflow-debug.js"></script>
 
+
+{%if notes %}
+
+
+<div id="boo"></div>
+
+
+
 <script>
-    const vf = new Vex.Flow.Factory({
-      renderer: { elementId: "boo", width: 500, height: 200 }
-    });
+
+
+  notelist = document.getElementById("notebox").innerHTML;
+  notelist = {{notes|safe}};
+  console.log(typeof notelist)
+  console.log(notelist);
+  console.log("Entered writeNotes")
+ 
+  const { Renderer, Stave, StaveNote, Voice, Formatter } = Vex.Flow;
+
+  // Create an SVG renderer and attach it to the DIV element named "boo".
+  const div = document.getElementById("boo");
+  const renderer = new Renderer(div, Renderer.Backends.SVG);
+
+  // Configure the rendering context.
+  renderer.resize(500, 500);
+  const context = renderer.getContext();
+
+  // Create a stave of width 400 at position 10, 40 on the canvas.
+  const stave = new Stave(10, 40, 400);
+
+  // Add a clef and time signature.
+  stave.addClef("treble").addTimeSignature("4/4");
+
+  // Connect it to the rendering context and draw!
+  stave.setContext(context).draw();
+
+  // Create the notes
+  let notes = [];
+
+  for (let i=0; i<notelist.length; i++) {
+    console.log(i);
+    newkey = String(notelist[i]) + "/4";
+    console.log(newkey);
+    currNote = new StaveNote({keys: [newkey], duration: "q"});
+    notes.push(currNote);
+  }
+
+  // Create a voice in 4/4 and add above notes
+  const voice = new Voice({ num_beats: 10, beat_value: 10 });
+  voice.addTickables(notes.slice(0, 4));
+
+  // Format and justify the notes to 400 pixels.
+  new Formatter().joinVoices([voice]).format([voice], 350);
+
+  // Render voice
+  voice.draw(context, stave);
+
   
-    const score = vf.EasyScore();
-    const system = vf.System();
+
   
-    system
-      .addStave({
-        voices: [
-          score.voice(score.notes("C#5/q, B4, A4, G#4", { stem: "up" })),
-          score.voice(score.notes("C#4/h, C#4", { stem: "down" }))
-        ]
-      })
-      .addClef("treble")
-      .addTimeSignature("4/4");
-  
-    vf.draw();
-  </script>
+
+</script>
+
+{% endif %}
 
 
