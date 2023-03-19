@@ -7,10 +7,8 @@ from .forms import AudioForm
 # Create your views here.
 
 def home_view(request):
-    print("IN HOME VIEW!")
     context = {}
     if request.method == 'POST':
-        print("IN POST!")
         file = request.FILES.get('file')
         context['notes'] = getPitchList(file.name)
         context['form'] = AudioForm()

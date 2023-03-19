@@ -1,0 +1,11 @@
+body {
+    background-color: rgb(173, 216, 230);
+}
+.userValues {
+    font-size: 18px;
+    font-weight: bold;
+}
+.btn {
+    font-size: 15px;
+    font-weight: bold;
+}
