@@ -15,7 +15,7 @@ def getNoteList(pitches, onsets, clef):
             # Incorporate a regular note
             print("regular")
             note = Note(name = pitches[i-1],
-                        length = duration//8,
+                        length = duration/8,
                         clef = clef)
             notes.append(note)
             duration = 1
@@ -23,8 +23,22 @@ def getNoteList(pitches, onsets, clef):
             # Incorporate a rest note
             print("rest")
             note = Note(name = "##",
-                        length = duration//8,
+                        length = duration/8,
                         clef = clef)
             notes.append(note)
-    print(notes)
+    
+    # Add the last note.
+    if onsets[length-1] == 1:
+        note = Note(name = pitches[length-1],
+                    length = duration/8,
+                    clef = clef)
+        notes.append(note)
+    else:
+        note = Note(name = "##",
+                    length = duration//8,
+                    clef = clef)
+        notes.append(note)
+    
+    for note in notes:
+        print(f"Note name: {note.name}, length: {note.length}")
     return notes
