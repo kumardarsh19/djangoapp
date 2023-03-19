@@ -9,13 +9,12 @@ from .forms import AudioForm
 def home_view(request):
     context = {'form': AudioForm()}
     if request.method == 'POST':
-        print("RETURN VIEW")
         form = AudioForm(request.POST, request.FILES)
         if form.is_valid():
             clef = form.cleaned_data['clef']
             time_signature = form.cleaned_data['time_signature']
             file = form.cleaned_data['file']
-            print(f"\tfile: {file}\tclef: \n{clef}\ttime_signure: {time_signature}")
+            print(f"file: {file}, clef: {clef}, time_signature: {time_signature}")
 
             notesPitches = getPitchList(file)
             notesOnsets = getOnsetList(file)

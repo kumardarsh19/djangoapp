@@ -64,16 +64,13 @@ def gaussWindow(signal, windowsize, starti):
 
     return np.array(ret).reshape(size(signal))
 
-def getPitchList(fileName, plot=False):
+def getPitchList(file, plot=False):
     notes = []
-
-    sample_rate, time_domain_sig = wavfile.read("audioprocessing/audios/C-scale.wav");
+    sample_rate, time_domain_sig = wavfile.read(file)
     
     #Normalize method from preprocessing.py
     time_domain_sig = normalize(time_domain_sig)
 
-
-    
     num_samples = len(time_domain_sig)
     clip_len = num_samples // sample_rate
     onesec = sample_rate
@@ -111,20 +108,14 @@ def getPitchList(fileName, plot=False):
         maxi = np.where(freq_domain_sig[0:8000] == max)[0]
         maxout = maxi
 
-        #print("Note detected at ", freq_ax[maxout])
-        
-
         #Ensures we don't take logarithm of 0
         if (freq_ax[maxout] == 0): continue
 
         #Apply standard formula to determine number of steps away from A
         num_semitones = round(12 * math.log2(freq_ax[maxout] / A4))
         note = LNOTES[num_semitones % 12]
-        #print(note)
-
         notes.append(note)
-
-
+    print(f"\n--------Pitch Processor output--------\n{notes}")
     return notes
 
 

@@ -9,9 +9,11 @@ def getNoteList(pitches, onsets, clef):
     duration = 1
     for i in range(1, length):
         if pitches[i] == pitches[i-1]:
+            print("increment duration")
             duration += 1
         elif pitches[i] != pitches[i-1] and onsets[i-1] == 1:
             # Incorporate a regular note
+            print("regular")
             note = Note(name = pitches[i-1],
                         length = duration//8,
                         clef = clef)
@@ -19,8 +21,10 @@ def getNoteList(pitches, onsets, clef):
             duration = 1
         else:
             # Incorporate a rest note
+            print("rest")
             note = Note(name = "##",
                         length = duration//8,
                         clef = clef)
             notes.append(note)
+    print(notes)
     return notes
