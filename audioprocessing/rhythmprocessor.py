@@ -3,7 +3,7 @@ from scipy.io import wavfile
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-from preprocessing import normalize;
+from audioprocessing.preprocessing import normalize;
 
 found = 1
 not_found = 0

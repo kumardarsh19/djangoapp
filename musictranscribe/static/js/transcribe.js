@@ -1,20 +1,23 @@
-const { Renderer, Stave } = Vex.Flow;
+function writeNotes(notelist) {
 
-// Create an SVG renderer and attach it to the DIV element with id="output".
-const div = document.getElementById("output");
-console.log(div)
-const renderer = new Renderer(div, Renderer.Backends.SVG);
+    let notes = [];
 
-// Configure the rendering context.
-renderer.resize(500, 500);
-const context = renderer.getContext();
-context.setFont('Arial', 10);
+    for (let i=0; i<notelist.length; i++) {
+        curr = new StaveNote({keys: [notelist[i]], duration: "q"});
+        notes[i] = curr;
+    }
 
-// Create a stave of width 400 at position 10, 40.
-const stave = new Stave(10, 40, 400);
+    // Helper function to justify and draw a 4/4 voice.
+    Formatter.FormatAndDraw(context, stave, notes);
 
-// Add a clef and time signature.
-stave.addClef('treble').addTimeSignature('4/4');
+    const doc = new jsPDF();
+    const svgElement = div.childNodes[0];
+    doc.svg(svgElement).then(() => doc.save("score.pdf"));
 
-// Connect it to the rendering context and draw!
-stave.setContext(context).draw();
+    console.log("Saved score.pdf");
+
+   
+
+}
+
+
