@@ -123,7 +123,6 @@ def getPitchList(file, plot=False):
 def getNoteGraph(fileName, plot=True):
 
     sample_rate, time_domain_sig = wavfile.read("audios/C-scale.wav")
-   
     num_samples = len(time_domain_sig)
     clip_len = num_samples // sample_rate
     onesec = sample_rate
