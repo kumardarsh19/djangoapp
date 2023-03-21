@@ -13,7 +13,7 @@ def getNoteList(pitches, onsets, clef):
             duration += 1
         elif pitches[i] != pitches[i-1] and onsets[i-1] == 1:
             # Incorporate a regular note
-            print("regular")
+            # print("regular")
             note = Note(name = pitches[i-1],
                         length = duration/8,
                         clef = clef)
