@@ -1,5 +1,16 @@
+html, body {
+    height: 100%;
+}
 body {
     background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+}
+footer {
+    margin-top: auto;
+}
+.container-fluid {
+    flex-grow: 1;
 }
 .userValues {
     font-size: 18px;
