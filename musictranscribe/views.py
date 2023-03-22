@@ -15,11 +15,16 @@ def home_view(request):
             time_signature = form.cleaned_data['time_signature']
             file = form.cleaned_data['file']
             print(f"file: {file}, clef: {clef}, time_signature: {time_signature}")
-
+            
             notesPitches = getPitchList(file)
             context['pitches'] = notesPitches;
+            context['numBars'] = getNumBars(notesPitches, time_signature);
             notesOnsets = getOnsetList(file)
             context['notes'] = getNoteList(notesPitches, notesOnsets, clef)
             print(context)
             return render(request, 'home.html', context)
     return render(request, "home.html", context)
+
+
+def getNumBars(pitchList, time_sig):
+    return len(pitchList) // int(time_sig[0]);
