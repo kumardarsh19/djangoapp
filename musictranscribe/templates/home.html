@@ -31,12 +31,12 @@
             {% endif %}
         </div>
         
-        {%if notes %}
+        {%if pitches %}
             <div id="boo"></div>
 
             <script>
             notelist = document.getElementById("notebox").innerHTML;
-            notelist = {{notes|safe}};
+            notelist = {{pitches|safe}};
             console.log(typeof notelist)
             console.log(notelist);
             console.log("Entered writeNotes")

@@ -17,7 +17,9 @@ def home_view(request):
             print(f"file: {file}, clef: {clef}, time_signature: {time_signature}")
 
             notesPitches = getPitchList(file)
+            context['pitches'] = notesPitches;
             notesOnsets = getOnsetList(file)
             context['notes'] = getNoteList(notesPitches, notesOnsets, clef)
+            print(context)
             return render(request, 'home.html', context)
     return render(request, "home.html", context)
