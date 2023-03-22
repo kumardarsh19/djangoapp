@@ -1,5 +1,4 @@
 function writeNotes(notelist) {
-
     let notes = [];
 
     for (let i=0; i<notelist.length; i++) {

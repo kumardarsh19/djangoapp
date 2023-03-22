@@ -38,10 +38,9 @@ def detect_beats_channels(audio_data) -> np.array:
                     if np.abs(audio_data[data][channel]) > greatest_beat:
                         greatest_beat = np.abs(audio_data[data][channel])
                 beats.append(greatest_beat)
-            print("New beats\n")
             return np.array(beats)
-    except:
-        print("Same beats\n")
+    except: 
+        print("Same beats")
         return audio_data
 
 def getOnsetList(file):

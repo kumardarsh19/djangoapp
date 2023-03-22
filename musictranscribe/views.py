@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from audioprocessing.pitchprocessor import getPitchList
 from audioprocessing.rhythmprocessor import getOnsetList
-from audioprocessing.integrator import getNoteList
 from .forms import AudioForm
 
 def home_view(request):
@@ -12,7 +11,6 @@ def home_view(request):
             file = form.cleaned_data['file']
             timeSignature = form.cleaned_data['time_signature']
             clef = form.cleaned_data['clef']
-            # print(f"file: {file}, clef: {clef}, time_signature: {time_signature}")
             notesPitches = getPitchList(file)
             notesOnsets = getOnsetList(file)
             context['numBars'] = getNumBars(notesPitches, timeSignature)
