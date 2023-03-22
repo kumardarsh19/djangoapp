@@ -10,6 +10,13 @@ def home_view(request):
         form = AudioForm(request.POST, request.FILES)
         if form.is_valid():
             file = form.cleaned_data['file']
+            print(f"file: {file}, clef: {clef}, time_signature: {time_signature}")
+            
+            
+            context['numBars'] = getNumBars(notesPitches, time_signature);
+            notesOnsets = getOnsetList(file)
+            context['notes'] = getNoteList(notesPitches, notesOnsets, clef)
+            print(context)
             print(f"file: {file}, clef: {form.cleaned_data['clef']}, time_signature: {form.cleaned_data['time_signature']}")
             context['pitches'] = getPitchList(file)
             context['onsets'] = getOnsetList(file)
@@ -17,3 +24,7 @@ def home_view(request):
             context['timeSignature'] = form.cleaned_data['time_signature']
             return render(request, 'home.html', context)
     return render(request, "home.html", context)
+
+
+def getNumBars(pitchList, time_sig):
+    return len(pitchList) // int(time_sig[0]);
