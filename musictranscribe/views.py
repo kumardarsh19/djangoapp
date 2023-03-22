@@ -10,9 +10,11 @@ def home_view(request):
         form = AudioForm(request.POST, request.FILES)
         if form.is_valid():
             file = form.cleaned_data['file']
+            clef = form.cleaned_data['clef']
+            time_signature = form.cleaned_data['time_signature']
             print(f"file: {file}, clef: {clef}, time_signature: {time_signature}")
             
-            
+            notesPitches = getPitchList(file)
             context['numBars'] = getNumBars(notesPitches, time_signature);
             notesOnsets = getOnsetList(file)
             context['notes'] = getNoteList(notesPitches, notesOnsets, clef)
