@@ -33,20 +33,16 @@
     {%if pitches|length > 0 %}
         <div id="boo"></div>
 
-        <div id="output"></div>
-        <script>
-            // Note class for Vex.Flow
-            class Note {
-                constructor(name, length) {
-                    this.name = name;
-                    this.length = length;
-                }
-            }
-
+        <div id="musicsheet"></div>
+        <script type="module">
+            import { getNoteList } from './../static/js/transcribe.js'
+            import { Note } from './../static/js/transcribe.js'
+            
+            // Start of Transcription code
             const { Renderer, Stave } = Vex.Flow;
 
             // Create an SVG renderer and attach it to the DIV element named "boo".
-            const div = document.getElementById("output");
+            const div = document.getElementById("musicsheet");
             const renderer = new Renderer(div, Renderer.Backends.SVG);
 
             // Configure the rendering context.
@@ -54,8 +50,8 @@
             const context = renderer.getContext();
 
             // Create a stave of width 400 at position 10, 40 on the canvas.
-            const stave = new Stave(10, 40, 400);
-            
+            const stave = new Stave(50, 10, 500);
+
             // Get the pitches, and onsets array.
             var pitches = {{pitches|safe}};
             var onsets = {{onsets|safe}};
@@ -66,40 +62,6 @@
 
             // Connect it to the rendering context and draw!
             stave.setContext(context).draw();
-            
-            // getNoteList integrates the output of rhythm and pitch processor
-            // into a list of notes that can be used by Vex.Flow.
-            function getNoteList(pitches, onsets) {
-                notes = [];
-                length = pitches.length;
-                duration = 1;
-                for (let i = 1; i < length; i++) {
-                    if (pitches[i] == pitches[i-1]) {
-                        // print("increment duration")
-                        duration += 1;
-                    } else if (pitches[i] != pitches[i-1] && onsets[i-1] == 1) {
-                        // Incorporate a regular note
-                        // print("regular")
-                        note = new Note(pitches[i-1], duration/8);
-                        notes.push(note);
-                        duration = 1;
-                    } else {
-                        // Incorporate a rest note
-                        // print("rest")
-                        note = new Note('##', duration/8);
-                        notes.push(note);
-                    }
-                }
-                // Add the last note.
-                if (onsets[length-1] == 1) {
-                    note = new Note(pitches[length-1], duration/8);
-                    notes.push(note);
-                } else {
-                    note = new Note('##', duration/8);
-                    notes.push(note);
-                }
-                return notes;
-            }
         </script>
     {% endif %}
 
