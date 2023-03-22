@@ -12,8 +12,7 @@ def home_view(request):
             file = form.cleaned_data['file']
             print(f"file: {file}, clef: {clef}, time_signature: {time_signature}")
             
-            notesPitches = getPitchList(file)
-            context['pitches'] = notesPitches;
+            
             context['numBars'] = getNumBars(notesPitches, time_signature);
             notesOnsets = getOnsetList(file)
             context['notes'] = getNoteList(notesPitches, notesOnsets, clef)
