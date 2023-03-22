@@ -7,26 +7,17 @@ from .forms import AudioForm
 # Create your views here.
 
 def home_view(request):
-    print("IN HOME VIEW!")
-    context = {}
+    context = {'form': AudioForm()}
     if request.method == 'POST':
-        print("IN POST!")
-        file = request.FILES.get('file')
-        context['notes'] = getPitchList(file.name)
-        context['form'] = AudioForm()
-        return render(request, 'home.html', context)
-    context['form'] = AudioForm()
+        form = AudioForm(request.POST, request.FILES)
+        if form.is_valid():
+            clef = form.cleaned_data['clef']
+            time_signature = form.cleaned_data['time_signature']
+            file = form.cleaned_data['file']
+            print(f"file: {file}, clef: {clef}, time_signature: {time_signature}")
+
+            notesPitches = getPitchList(file)
+            notesOnsets = getOnsetList(file)
+            context['notes'] = getNoteList(notesPitches, notesOnsets, clef)
+            return render(request, 'home.html', context)
     return render(request, "home.html", context)
-    
-
-def return_view(request):
-    context = {}
-    data = request.FILES
-    
-    file = request.FILES.get('filen')
-    clef = request.get('clef') # TODO: GET CLEF FROM FORM.
-    notesPitches = getPitchList(file.name)
-    notesOnsets = getOnsetList(file.name)
-    context['notes'] = getNoteList(notesPitches, notesOnsets, clef)
-
-    return render(request, "return.html", context)

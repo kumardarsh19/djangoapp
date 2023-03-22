@@ -44,9 +44,8 @@ def detect_beats_channels(audio_data) -> np.array:
         print("Same beats\n")
         return audio_data
 
-def getOnsetList(audio_file):
-    #TODO: If wavfile.read returns 2D array, this code will not work.
-    sampling_rate, audio_data = wavfile.read("audios/C-scale.wav")
+def getOnsetList(file):
+    sampling_rate, audio_data = wavfile.read(file)
     audio_data = detect_beats_channels(audio_data)
     time_interval = sampling_rate // 8
     samples = len(audio_data)
@@ -64,6 +63,8 @@ def getOnsetList(audio_file):
             peaks.append(found)
         else:
             peaks.append(not_found)
-    print(f"\n{peaks}")
-    print("\n\n--- %s seconds ---" % (time.time() - start_time))
+    print(f"\n--------Rhythm Processor output--------\n{peaks}\n")
     return peaks
+
+if __name__ == '__main__':
+    getOnsetList("audios/Random.wav")
