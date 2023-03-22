@@ -10,21 +10,18 @@ def home_view(request):
         form = AudioForm(request.POST, request.FILES)
         if form.is_valid():
             file = form.cleaned_data['file']
-            print(f"file: {file}, clef: {clef}, time_signature: {time_signature}")
-            
-            
-            context['numBars'] = getNumBars(notesPitches, time_signature);
+            timeSignature = form.cleaned_data['time_signature']
+            clef = form.cleaned_data['clef']
+            # print(f"file: {file}, clef: {clef}, time_signature: {time_signature}")
+            notesPitches = getPitchList(file)
             notesOnsets = getOnsetList(file)
-            context['notes'] = getNoteList(notesPitches, notesOnsets, clef)
-            print(context)
-            print(f"file: {file}, clef: {form.cleaned_data['clef']}, time_signature: {form.cleaned_data['time_signature']}")
-            context['pitches'] = getPitchList(file)
-            context['onsets'] = getOnsetList(file)
-            context['clef'] = form.cleaned_data['clef']
-            context['timeSignature'] = form.cleaned_data['time_signature']
+            context['numBars'] = getNumBars(notesPitches, timeSignature)
+            context['pitches'] = notesPitches
+            context['onsets'] = notesOnsets
+            context['clef'] = clef
+            context['timeSignature'] = timeSignature
             return render(request, 'home.html', context)
     return render(request, "home.html", context)
 
-
 def getNumBars(pitchList, time_sig):
-    return len(pitchList) // int(time_sig[0]);
+    return len(pitchList) // int(time_sig[0])

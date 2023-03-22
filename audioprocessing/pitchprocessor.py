@@ -29,8 +29,6 @@ NOTES = {
     493.88: 'B'
 }
 
-
-
 '''
 Apply rectangular window of size sixteenth to signal
 starting at index starti
@@ -40,7 +38,6 @@ def segmentSignal(signal, sixteenth, starti):
     for i in range(len(signal)):
         segment[i] = segment[i] * ((i > starti) and (i < starti+sixteenth))
     return segment
-
 
 '''
 Apply gaussian window of size windowsize
@@ -57,11 +54,7 @@ def gaussWindow(signal, windowsize, starti):
             segment[i] *= window[i-starti]
         else:
             segment[i] = 0
-    
-
     return segment.reshape(signal.shape)
-
-
     return np.array(ret).reshape(size(signal))
 
 def getPitchList(file, plot=False):
@@ -118,10 +111,8 @@ def getPitchList(file, plot=False):
     print(f"\n--------Pitch Processor output--------\n{notes}")
     return notes
 
-
 #For visualizing signals
 def getNoteGraph(fileName, plot=True):
-
     sample_rate, time_domain_sig = wavfile.read("audios/C-scale.wav")
     num_samples = len(time_domain_sig)
     clip_len = num_samples // sample_rate
@@ -145,7 +136,6 @@ def getNoteGraph(fileName, plot=True):
     print(LNOTES[int(num_semitones % 13)])
 
     if plot:
-
         plt.subplot(4, 1, 1)
         plt.plot(time_ax, time_domain_sig)
         plt.title("Original Signal")
@@ -163,10 +153,5 @@ def getNoteGraph(fileName, plot=True):
         plt.plot(freq_ax, abs(freq_domain_sig))
         plt.title("Frequency Domain")
         plt.xlim([200, 600])
-
-
         plt.show()
-
-
     return None
-
