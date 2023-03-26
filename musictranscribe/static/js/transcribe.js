@@ -16,7 +16,7 @@ export function getNoteList(pitches , onsets) {
         if (pitches[i] == pitches[i-1]) {
             // print("increment duration")
             duration ++;
-        } else if (pitches[i] != pitches[i-1] && onsets[i-1] == 1) {
+        } else if (onsets[i-1] == 1) {
             // Incorporate a regular note
             // print("regular")
             let note = new Note(pitches[i-1], duration/8);
@@ -27,6 +27,7 @@ export function getNoteList(pitches , onsets) {
             // print("rest")
             let note = new Note('##', duration/8);
             notes.push(note);
+            duration = 1;
         }
     }
     // Add the last note.
