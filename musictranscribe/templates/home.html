@@ -56,7 +56,10 @@
             var pitches = {{pitches|safe}};
             var onsets = {{onsets|safe}};
             var notes = getNoteList(pitches, onsets);
-
+            for (let i = 0; i < notes.length; i++) {
+                console.log(notes[i].name, notes[i].length);
+            }
+            
             // Use the clef and treble from the notes array to set in Vex.Flow
             stave.addClef("{{clef|safe}}").addTimeSignature("{{timeSignature|safe}}");
 
