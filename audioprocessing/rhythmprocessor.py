@@ -45,16 +45,21 @@ def detect_beats_channels(audio_data) -> np.array:
 
 def getOnsetList(file):
     sampling_rate, audio_data = wavfile.read(file)
-    audio_data = detect_beats_channels(audio_data)
+    print("initial len: %d" % len(audio_data))
+    audio_data = normalize(audio_data)
     time_interval = sampling_rate // 8
     samples = len(audio_data)
+    
     audio_length = samples // sampling_rate
     peaks = []
     start_time = time.time()
+    print("Rhythm processor: iterating over %d samples with interval %d" % (int(samples), int(time_interval)))
     for i in np.arange(0, samples, time_interval):
         left_bound = i
         right_bound = i + time_interval
         signal = audio_data[left_bound:right_bound]
+        if np.amax(signal) < 0.15: continue
+
         localPeaksX, localPeaksInfo = find_peaks(signal, 
                                                  distance=time_interval, 
                                                  height=onset_height)

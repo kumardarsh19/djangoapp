@@ -11,8 +11,12 @@ def home_view(request):
             file = form.cleaned_data['file']
             timeSignature = form.cleaned_data['time_signature']
             clef = form.cleaned_data['clef']
-            notesPitches = getPitchList(file)
             notesOnsets = getOnsetList(file)
+            notesPitches = getPitchList(file)
+            numPitch = len(notesPitches)
+            numOn = len(notesOnsets)
+            assert(numPitch == numOn)
+            
             context['numBars'] = getNumBars(notesPitches, timeSignature)
             context['pitches'] = notesPitches
             context['onsets'] = notesOnsets

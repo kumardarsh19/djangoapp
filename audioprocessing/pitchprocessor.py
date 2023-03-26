@@ -58,9 +58,16 @@ def gaussWindow(signal, windowsize, starti):
     return np.array(ret).reshape(size(signal))
 
 def getPitchList(file, plot=False):
+    
+    
+    print("Running pitch processor...")
     notes = []
     sample_rate, time_domain_sig = wavfile.read(file)
-    
+    if (plot):
+        plt.plot(time_domain_sig)
+
+        plt.show()
+    print(len(time_domain_sig))
     #Normalize method from preprocessing.py
     time_domain_sig = normalize(time_domain_sig)
 
@@ -78,7 +85,9 @@ def getPitchList(file, plot=False):
     overlap = 0
     
     #Apply window over signal ~16 times
-    for i in range(0, num_samples, sixteenth*2):
+    print("Pitch processor: iterating over %d samples with interval %d" % (int(num_samples), int(sixteenth)))
+
+    for i in range(0, num_samples, sixteenth):
         segment = segmentSignal(time_domain_sig, sixteenth, i)
 
         assert(segment.shape == time_domain_sig.shape)
@@ -113,7 +122,7 @@ def getPitchList(file, plot=False):
 
 #For visualizing signals
 def getNoteGraph(fileName, plot=True):
-    sample_rate, time_domain_sig = wavfile.read("audios/C-scale.wav")
+    sample_rate, time_domain_sig = wavfile.read(fileName)
     num_samples = len(time_domain_sig)
     clip_len = num_samples // sample_rate
     onesec = sample_rate
@@ -122,7 +131,7 @@ def getNoteGraph(fileName, plot=True):
     time_ax = np.linspace(0, clip_len, num_samples)
     freq_ax = np.linspace(0, df * (num_samples - 1), num_samples)
 
-    segment = gaussWindow(time_domain_sig, sixteenth, int(sample_rate * 2.5))
+    segment = segmentSignal(time_domain_sig, sixteenth, int(sample_rate * 2.5))
 
     freq_domain_sig = fft(segment)
 
@@ -155,3 +164,5 @@ def getNoteGraph(fileName, plot=True):
         plt.xlim([200, 600])
         plt.show()
     return None
+
+
