@@ -34,9 +34,8 @@ Apply rectangular window of size sixteenth to signal
 starting at index starti
 '''
 def segmentSignal(signal, sixteenth, starti):
-    segment = np.copy(signal)
-    for i in range(len(signal)):
-        segment[i] = segment[i] * ((i > starti) and (i < starti+sixteenth))
+    segment = np.zeros(signal.shape)
+    segment[starti:starti+sixteenth] = signal[starti:starti+sixteenth]
     return segment
 
 '''
