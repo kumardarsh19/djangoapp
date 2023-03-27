@@ -55,7 +55,7 @@ def getOnsetList(sampling_rate, audio_data):
     peaks = []
     start_time = time.time()
     index = 0
-    print("Rhythm processor: iterating over %d samples with interval %d" % (int(samples), int(time_interval)))
+    #print("Rhythm processor: iterating over %d samples with interval %d" % (int(samples), int(time_interval)))
     for i in range(0, samples, time_interval):
         index += 1
         left_bound = i
