@@ -1,5 +1,8 @@
+<!DOCTYPE html>
+
 <head>
     {% load static %}
+    
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
@@ -8,6 +11,8 @@
     <header class="bg-primary text-white text-center py-2">
         <h1 class="display-4">Music Transcribe</h1>
     </header>
+
+    <script id="helpers" src="{% static 'js/helpers.js' %}"></script>
 </head>
 
 <body>
@@ -37,20 +42,29 @@
         <script type="module">
             import { getNoteList } from './../static/js/transcribe.js'
             import { Note } from './../static/js/transcribe.js'
-            
             // Start of Transcription code
-            const { Renderer, Stave } = Vex.Flow;
+            const { Renderer, Stave, Formatter, StaveNote, Beam } = Vex.Flow;
 
             // Create an SVG renderer and attach it to the DIV element named "boo".
             const div = document.getElementById("musicsheet");
             const renderer = new Renderer(div, Renderer.Backends.SVG);
 
-            // Configure the rendering context.
-            renderer.resize(500, 500);
-            const context = renderer.getContext();
+            var staveW = 500
+            var staveH = 90
 
-            // Create a stave of width 400 at position 10, 40 on the canvas.
-            const stave = new Stave(50, 10, 500);
+            // Configure the rendering context.
+            var contextWidth = staveW * 4;
+            var contextHeight = staveH * 5;
+
+            renderer.resize(contextWidth, contextHeight);
+            const context = renderer.getContext();
+            var startx = 50;
+            var starty = 10;
+            var width = 500;
+            
+            
+            var startStave = new Stave(startx, starty, staveW);
+            
 
             // Get the pitches, and onsets array.
             var pitches = {{pitches|safe}};
@@ -61,10 +75,28 @@
             }
             
             // Use the clef and treble from the notes array to set in Vex.Flow
-            stave.addClef("{{clef|safe}}").addTimeSignature("{{timeSignature|safe}}");
+            startStave.addClef("{{clef|safe}}").addTimeSignature("{{timeSignature|safe}}");
+            startStave.setContext(context);
 
-            // Connect it to the rendering context and draw!
-            stave.setContext(context).draw();
+            const notesMeasure2_part1 = [new StaveNote({ keys: ["c/4"], duration: "8" }), new StaveNote({ keys: ["d/4"], duration: "8" }), new StaveNote({ keys: ["b/4"], duration: "8" }), new StaveNote({ keys: ["c/4", "e/4", "g/4"], duration: "8" })];
+
+            const notesMeasure2_part2 = [new StaveNote({ keys: ["c/4"], duration: "8" }), new StaveNote({ keys: ["d/4"], duration: "8" }), new StaveNote({ keys: ["b/4"], duration: "8" }), new StaveNote({ keys: ["c/4", "e/4", "g/4"], duration: "8" })];
+
+            // Create the beams for 8th notes in second measure.
+            const beam1 = new Beam(notesMeasure2_part1);
+            const beam2 = new Beam(notesMeasure2_part2);
+
+            const notesMeasure2 = notesMeasure2_part1.concat(notesMeasure2_part2);
+
+            var staveList = getStaves(Math.floor(notes.length), startStave);
+            console.log("Notes: ", notes)
+            console.log("Staves: ", staveList)
+            
+            for (let i=0; i<staveList.length; i++) {
+                staveList[i].setContext(context).draw();
+            }
+
+            
         </script>
     {% endif %}
 
