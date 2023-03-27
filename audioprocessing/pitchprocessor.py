@@ -112,7 +112,9 @@ def getPitchList(sample_rate, time_domain_sig, plot=0):
         maxout = maxi
 
         #Ensures we don't take logarithm of 0
-        if (freq_ax[maxout] == 0): continue
+        if (freq_ax[maxout] == 0):
+            notes.append('O')
+            continue
 
         #Apply standard formula to determine number of steps away from A
         num_semitones = round(12 * math.log2(freq_ax[maxout] / A4))
