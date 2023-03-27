@@ -30,7 +30,7 @@ def home_view(request):
             # Check SNR >= 60 dB.
             if not validSNR(signal):
                 print(f"SNR is too low. Please upload a better quality audio file.")
-                #TODO: Add error message to home.html
+                context['reject'] = True
                 return render(request, "home.html", context)
 
             # Call rhythm and pitch processors.
