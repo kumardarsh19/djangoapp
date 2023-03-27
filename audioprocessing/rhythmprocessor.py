@@ -54,17 +54,20 @@ def getOnsetList(sampling_rate, audio_data):
     audio_length = samples // sampling_rate
     peaks = []
     start_time = time.time()
+    index = 0
     print("Rhythm processor: iterating over %d samples with interval %d" % (int(samples), int(time_interval)))
     for i in range(0, samples, time_interval):
+        index += 1
         left_bound = i
         right_bound = i + time_interval
         signal = audio_data[left_bound:right_bound]
 
         localPeaksX, localPeaksInfo = find_peaks(signal, 
-                                                 distance=1, 
-                                                 height=0.8)
+                                                 distance=time_interval, 
+                                                 height=0.9)
         
         if len(localPeaksX) > 0:
+            print("Peak detected at index %d" % index)
             peaks.append(found)
         else:
             peaks.append(not_found)
