@@ -9,8 +9,14 @@ Divide every sample by the max value
 Apply threshold to each sample
 '''
 def normalize(signal):
+    
     signal = signal.reshape(-1,)
-    signal = signal / np.amax(signal)
+    initlen = len(signal)
+    max = np.amax(signal)
+    newsig = np.zeros(signal.shape)
     for i in range(len(signal)):
-        if np.abs(signal[i]) < THRESHOLD: signal[i] = 0
-    return signal
+        newsig[i] = signal[i] / max
+        if np.abs(newsig[i]) < THRESHOLD: newsig[i] = 0
+    newlen = len(newsig)
+    assert(newlen == initlen)
+    return newsig

@@ -56,12 +56,19 @@ def gaussWindow(signal, windowsize, starti):
     return segment.reshape(signal.shape)
     return np.array(ret).reshape(size(signal))
 
-def getPitchList(file, plot=False):
-    notes = []
-    sample_rate, time_domain_sig = wavfile.read(file)
+def getPitchList(sample_rate, time_domain_sig, plot=0):
     
+    
+    print("Running pitch processor...")
+    notes = []
+    
+    if (plot):
+        plt.plot(time_domain_sig)
+
+        plt.show()
+    print(len(time_domain_sig))
     #Normalize method from preprocessing.py
-    time_domain_sig = normalize(time_domain_sig)
+    
 
     num_samples = len(time_domain_sig)
     clip_len = num_samples // sample_rate
@@ -77,14 +84,18 @@ def getPitchList(file, plot=False):
     overlap = 0
     
     #Apply window over signal ~16 times
-    for i in range(0, num_samples, sixteenth*2):
+    print("Pitch processor: iterating over %d samples with interval %d" % (int(num_samples), int(sixteenth)))
+
+    for i in range(0, num_samples, sixteenth):
         segment = segmentSignal(time_domain_sig, sixteenth, i)
 
         assert(segment.shape == time_domain_sig.shape)
 
         #pass over negligible segments
         #may be changed later to consider rests
-        if np.amax(segment) < 0.15: continue
+        if np.amax(segment) < 0.15:
+            notes.append('O')
+            continue
 
 
         #If you want to see the graph with segment 
@@ -101,7 +112,9 @@ def getPitchList(file, plot=False):
         maxout = maxi
 
         #Ensures we don't take logarithm of 0
-        if (freq_ax[maxout] == 0): continue
+        if (freq_ax[maxout] == 0):
+            notes.append('O')
+            continue
 
         #Apply standard formula to determine number of steps away from A
         num_semitones = round(12 * math.log2(freq_ax[maxout] / A4))
@@ -112,7 +125,7 @@ def getPitchList(file, plot=False):
 
 #For visualizing signals
 def getNoteGraph(fileName, plot=True):
-    sample_rate, time_domain_sig = wavfile.read("audios/C-scale.wav")
+    sample_rate, time_domain_sig = wavfile.read(fileName)
     num_samples = len(time_domain_sig)
     clip_len = num_samples // sample_rate
     onesec = sample_rate
@@ -121,7 +134,7 @@ def getNoteGraph(fileName, plot=True):
     time_ax = np.linspace(0, clip_len, num_samples)
     freq_ax = np.linspace(0, df * (num_samples - 1), num_samples)
 
-    segment = gaussWindow(time_domain_sig, sixteenth, int(sample_rate * 2.5))
+    segment = segmentSignal(time_domain_sig, sixteenth, int(sample_rate * 2.5))
 
     freq_domain_sig = fft(segment)
 
@@ -154,3 +167,5 @@ def getNoteGraph(fileName, plot=True):
         plt.xlim([200, 600])
         plt.show()
     return None
+
+

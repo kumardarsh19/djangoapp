@@ -1,6 +1,9 @@
 from django.shortcuts import render
+from scipy.io import wavfile
+
 from audioprocessing.pitchprocessor import getPitchList
 from audioprocessing.rhythmprocessor import getOnsetList
+from audioprocessing.preprocessing import normalize
 from .forms import AudioForm
 
 def home_view(request):
@@ -11,8 +14,15 @@ def home_view(request):
             file = form.cleaned_data['file']
             timeSignature = form.cleaned_data['time_signature']
             clef = form.cleaned_data['clef']
-            notesPitches = getPitchList(file)
-            notesOnsets = getOnsetList(file)
+            fs, signal = wavfile.read(file);
+
+            signal = normalize(signal)
+            notesOnsets = getOnsetList(fs, signal)
+            notesPitches = getPitchList(fs, signal)
+            numPitch = len(notesPitches)
+            numOn = len(notesOnsets)
+            assert(numPitch == numOn)
+            
             context['numBars'] = getNumBars(notesPitches, timeSignature)
             context['pitches'] = notesPitches
             context['onsets'] = notesOnsets
