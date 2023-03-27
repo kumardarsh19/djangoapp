@@ -67,7 +67,7 @@ def getOnsetList(sampling_rate, audio_data):
                                                  height=0.9)
         
         if len(localPeaksX) > 0:
-            print("Peak detected at index %d" % index)
+            #print("Peak detected at index %d" % index)
             peaks.append(found)
         else:
             peaks.append(not_found)

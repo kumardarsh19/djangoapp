@@ -6,6 +6,15 @@ from audioprocessing.rhythmprocessor import getOnsetList
 from audioprocessing.preprocessing import normalize
 from audioprocessing.signaltonoise import signaltonoise
 from .forms import AudioForm
+import numpy as np
+
+def validSNR(signal):
+    snr = signaltonoise(signal)
+    if isinstance(snr, float):
+        snr = abs(snr)
+    else:
+        snr = abs(snr[0])
+    return snr >= 60
 
 def home_view(request):
     context = {'form': AudioForm()}
@@ -19,9 +28,9 @@ def home_view(request):
             fs, signal = wavfile.read(file)
 
             # Check SNR >= 60 dB.
-            snr = abs(signaltonoise(signal)[0])
-            if snr < 60:
-                print(f"SNR is too low: {snr}. Please upload a better quality audio file.")
+            if not validSNR(signal):
+                print(f"SNR is too low. Please upload a better quality audio file.")
+                #TODO: Add error message to home.html
                 return render(request, "home.html", context)
 
             # Call rhythm and pitch processors.
