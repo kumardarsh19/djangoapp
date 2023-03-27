@@ -56,19 +56,19 @@ def gaussWindow(signal, windowsize, starti):
     return segment.reshape(signal.shape)
     return np.array(ret).reshape(size(signal))
 
-def getPitchList(file, plot=False):
+def getPitchList(sample_rate, time_domain_sig, plot=0):
     
     
     print("Running pitch processor...")
     notes = []
-    sample_rate, time_domain_sig = wavfile.read(file)
+    
     if (plot):
         plt.plot(time_domain_sig)
 
         plt.show()
     print(len(time_domain_sig))
     #Normalize method from preprocessing.py
-    time_domain_sig = normalize(time_domain_sig)
+    
 
     num_samples = len(time_domain_sig)
     clip_len = num_samples // sample_rate
@@ -93,7 +93,9 @@ def getPitchList(file, plot=False):
 
         #pass over negligible segments
         #may be changed later to consider rests
-        if np.amax(segment) < 0.15: continue
+        if np.amax(segment) < 0.15:
+            notes.append('O')
+            continue
 
 
         #If you want to see the graph with segment 

@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 from audioprocessing.preprocessing import normalize;
+from audioprocessing.pitchprocessor import segmentSignal;
 
 found = 1
 not_found = 0
@@ -43,10 +44,10 @@ def detect_beats_channels(audio_data) -> np.array:
         print("Same beats")
         return audio_data
 
-def getOnsetList(file):
-    sampling_rate, audio_data = wavfile.read(file)
+def getOnsetList(sampling_rate, audio_data):
+
     print("initial len: %d" % len(audio_data))
-    audio_data = normalize(audio_data)
+    
     time_interval = sampling_rate // 8
     samples = len(audio_data)
     
@@ -54,15 +55,15 @@ def getOnsetList(file):
     peaks = []
     start_time = time.time()
     print("Rhythm processor: iterating over %d samples with interval %d" % (int(samples), int(time_interval)))
-    for i in np.arange(0, samples, time_interval):
+    for i in range(0, samples, time_interval):
         left_bound = i
         right_bound = i + time_interval
-        signal = audio_data[left_bound:right_bound]
-        if np.amax(signal) < 0.15: continue
+        signal = segmentSignal(audio_data, time_interval, left_bound)
 
         localPeaksX, localPeaksInfo = find_peaks(signal, 
-                                                 distance=time_interval, 
-                                                 height=onset_height)
+                                                 distance=1, 
+                                                 height=0.8)
+        
         if len(localPeaksX) > 0:
             peaks.append(found)
         else:
