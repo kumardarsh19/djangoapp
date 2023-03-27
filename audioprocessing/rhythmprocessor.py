@@ -58,7 +58,7 @@ def getOnsetList(sampling_rate, audio_data):
     for i in range(0, samples, time_interval):
         left_bound = i
         right_bound = i + time_interval
-        signal = segmentSignal(audio_data, time_interval, left_bound)
+        signal = audio_data[left_bound:right_bound]
 
         localPeaksX, localPeaksInfo = find_peaks(signal, 
                                                  distance=1, 
