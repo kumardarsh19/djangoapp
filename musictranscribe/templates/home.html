@@ -64,7 +64,7 @@
             var staveHeight = 90;
 
             var contextWidth = 3;
-            var contextHeight = 10;
+            var contextHeight = 100;
 
             
 
@@ -105,22 +105,22 @@
             console.log(staveList);
             //draw staves
             for (let i=0; i<staveList.length; i++) {
+                let noteIndex = (i*4) % pitches.length;
+                let currNotes = [];
+                for (let j=noteIndex; j<noteIndex+4; j++) {
+                    let currPitch = pitches[i];
+                    if ((pitches[i]) == '##') {
+                        currPitch = 'c';
+                    }
+                    let curr = new StaveNote({keys: [currPitch + '/4'], duration: '8'});
+                    console.log(curr.keys)
+                    currNotes.push(curr)
+                }
                 staveList[i].setContext(context).draw();
+                Formatter.FormatAndDraw(context, staveList[i], currNotes );
             }
 
-            //draw notes
-            for (let i=0; i<pitches.length; i++) {
-                console.log(pitches[i]);
-                let currPitch = pitches[i];
-                if ((pitches[i]) == '##') {
-                    currPitch = 'c';
-                }
-                let currNote = new StaveNote({keys: [currPitch + '/4'], duration: '8'});
-                
-                currNote.setStave(staveList[Math.floor(i / 4)]);
-                Formatter.FormatAndDraw(context, currNote.getStave(), [currNote]);
-                
-            }
+            
 
             
             
