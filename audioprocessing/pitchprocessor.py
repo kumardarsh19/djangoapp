@@ -5,8 +5,6 @@ import numpy as np
 from IPython.display import clear_output
 from scipy.fftpack import fft, fftshift
 from scipy.signal import *
-import sklearn
-from audioprocessing.preprocessing import normalize
 
 LOW_THRESHOLD = 2e-4
 HIGH_THRESHOLD = 0.7
@@ -54,19 +52,14 @@ def gaussWindow(signal, windowsize, starti):
         else:
             segment[i] = 0
     return segment.reshape(signal.shape)
-    return np.array(ret).reshape(size(signal))
 
 def getPitchList(sample_rate, time_domain_sig, plot=0):
-    
-    
-    print("Running pitch processor...")
     notes = []
     
     if (plot):
         plt.plot(time_domain_sig)
-
         plt.show()
-    print(len(time_domain_sig))
+
     #Normalize method from preprocessing.py
     
 
@@ -167,5 +160,3 @@ def getNoteGraph(fileName, plot=True):
         plt.xlim([200, 600])
         plt.show()
     return None
-
-
