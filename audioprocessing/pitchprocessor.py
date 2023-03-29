@@ -84,7 +84,7 @@ def getPitchList(sample_rate, time_domain_sig, plot=0):
     overlap = 0
     
     #Apply window over signal ~16 times
-    print("Pitch processor: iterating over %d samples with interval %d" % (int(num_samples), int(sixteenth)))
+    #print("Pitch processor: iterating over %d samples with interval %d" % (int(num_samples), int(sixteenth)))
 
     for i in range(0, num_samples, sixteenth):
         segment = segmentSignal(time_domain_sig, sixteenth, i)

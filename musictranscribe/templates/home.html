@@ -16,6 +16,11 @@
 </head>
 
 <body>
+    {% if reject %}
+        <div class="alert alert-danger" role="alert">
+            The file you uploaded has too much noise and we cannot process it. Please try a different file.
+        </div>
+    {% endif %}
     <script src="https://unpkg.com/vexflow@4.1.0/build/cjs/vexflow-debug.js"></script>
     <div class = "container-fluid py-4">
         <form enctype="multipart/form-data" method="post">
