@@ -95,18 +95,34 @@
             console.log("Notes: ", notes)
             console.log("Staves: ", staveList)
             
-            for (let i=0; i<staveList.length; i++) {
-                for (let j=i*4; j<i*4+4; j++) {
-                    let currNote = new StaveNote({ keys: ['c/4', 'e/4', 'a/4', 'b/4'], duration: 'w' });
-                    currNote.setStave(staveList[i]);
-                }
-                staveList[i].setContext(context).draw();
-            }
-
             var firstStave = staveList[0];
             firstStave.addTimeSignature("4/4");
             firstStave.addClef("treble");
-            firstStave.setContext(context).draw();
+            
+
+            
+            
+            console.log(staveList);
+            //draw staves
+            for (let i=0; i<staveList.length; i++) {
+                staveList[i].setContext(context).draw();
+            }
+
+            //draw notes
+            for (let i=0; i<pitches.length; i++) {
+                console.log(pitches[i]);
+                let currPitch = pitches[i];
+                if ((pitches[i]) == '##') {
+                    currPitch = 'c';
+                }
+                let currNote = new StaveNote({keys: [currPitch + '/4'], duration: '8'});
+                
+                currNote.setStave(staveList[Math.floor(i / 4)]);
+                Formatter.FormatAndDraw(context, currNote.getStave(), [currNote]);
+                
+            }
+
+            
             
             
         </script>
