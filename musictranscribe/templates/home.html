@@ -96,6 +96,10 @@
             console.log("Staves: ", staveList)
             
             for (let i=0; i<staveList.length; i++) {
+                for (let j=i*4; j<i*4+4; j++) {
+                    let currNote = new StaveNote({ keys: ['c/4', 'e/4', 'a/4', 'b/4'], duration: 'w' });
+                    currNote.setStave(staveList[i]);
+                }
                 staveList[i].setContext(context).draw();
             }
 
@@ -103,7 +107,7 @@
             firstStave.addTimeSignature("4/4");
             firstStave.addClef("treble");
             firstStave.setContext(context).draw();
-
+            
             
         </script>
 
