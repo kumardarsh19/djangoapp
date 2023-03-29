@@ -6,26 +6,13 @@ from IPython.display import clear_output
 from scipy.fftpack import fft, fftshift
 from scipy.signal import *
 
-LOW_THRESHOLD = 2e-4
+LOW_THRESHOLD = 0.15
 HIGH_THRESHOLD = 0.7
-MUSIC_RANGE = np.linspace(16, 7903, 88)
-PITCH_RANGE = 15.55
+
+
 A4 = 440
 LNOTES = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
-NOTES = {
-    261.63: 'C',
-    277.18: 'C#',
-    293.66: 'D',
-    311.13: 'D#',
-    329.63: 'E',
-    349.23: 'F',
-    369.99: 'F#',
-    392.00: 'G',
-    415.30: 'G#',
-    440.00: 'A',
-    466.16: 'A#',
-    493.88: 'B'
-}
+
 
 '''
 Apply rectangular window of size sixteenth to signal
@@ -36,22 +23,7 @@ def segmentSignal(signal, sixteenth, starti):
     segment[starti:starti+sixteenth] = signal[starti:starti+sixteenth]
     return segment
 
-'''
-Apply gaussian window of size windowsize
-starting at index starti
-window has standard of deviation of windowsize // 2
-'''
-def gaussWindow(signal, windowsize, starti):
-    segment = np.copy(signal)
-    endi = starti + windowsize
-    window = windows.gaussian(windowsize, std= windowsize // 2, sym=True).reshape(-1,)
-    
-    for i in range(len(signal)):
-        if i >= starti and i < endi:
-            segment[i] *= window[i-starti]
-        else:
-            segment[i] = 0
-    return segment.reshape(signal.shape)
+
 
 def getPitchList(sample_rate, time_domain_sig, plot=0):
     notes = []
@@ -86,7 +58,7 @@ def getPitchList(sample_rate, time_domain_sig, plot=0):
 
         #pass over negligible segments
         #may be changed later to consider rests
-        if np.amax(segment) < 0.15:
+        if np.amax(segment) < LOW_THRESHOLD:
             notes.append("##")
             continue
 
