@@ -1,19 +1,14 @@
 
 
 
-function getStaves(num, startStave) {
+export function getStaves(startx, starty, width, height, cw, ch, Vex) {
     const {Stave} = Vex.Flow;
-    ret = [startStave];
-    startx = startStave.x;
-    starty = startStave.y;
-    width = startStave.width;
-    height = startStave.height;
-    cW = startStave.getContext().height;
-    cH = startStave.getContext().height;
-    for (let i=1; i<num; i++) {
-        prev = ret[i-1];
-        curr = new Stave((startx + i * width) % cW, (starty + i * height) % cH, width);
-        ret.push(curr);
+    var ret = [];
+    for (let i=0; i<ch; i++) {
+        for (let j=0; j<cw; j++) {
+            let curr = new Stave(startx + j*width, starty + i*height, width);
+            ret.push(curr);
+        }
     }
 
     return ret;

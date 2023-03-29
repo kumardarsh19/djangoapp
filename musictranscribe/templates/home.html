@@ -12,7 +12,7 @@
         <h1 class="display-4">Music Transcribe</h1>
     </header>
 
-    <script id="helpers" src="{% static 'js/helpers.js' %}"></script>
+    
 </head>
 
 <body>
@@ -45,30 +45,31 @@
 
         <div id="musicsheet"></div>
         <script type="module">
-            import { getNoteList } from './../static/js/transcribe.js'
-            import { Note } from './../static/js/transcribe.js'
+            import { getNoteList, Note } from "{% static 'js/transcribe.js' %}"
+           
+            import { getStaves } from "{% static 'js/helpers.js' %}"
             // Start of Transcription code
             const { Renderer, Stave, Formatter, StaveNote, Beam } = Vex.Flow;
+
+            
 
             // Create an SVG renderer and attach it to the DIV element named "boo".
             const div = document.getElementById("musicsheet");
             const renderer = new Renderer(div, Renderer.Backends.SVG);
-
-            var staveW = 500
-            var staveH = 90
-
-            // Configure the rendering context.
-            var contextWidth = staveW * 4;
-            var contextHeight = staveH * 5;
-
-            renderer.resize(contextWidth, contextHeight);
-            const context = renderer.getContext();
+            
             var startx = 50;
-            var starty = 10;
-            var width = 500;
+            var starty = 100;
+
+            var staveWidth = 400;
+            var staveHeight = 90;
+
+            var contextWidth = 3;
+            var contextHeight = 10;
+
             
-            
-            var startStave = new Stave(startx, starty, staveW);
+
+            renderer.resize(staveWidth*contextWidth, staveHeight * contextHeight);
+            var context = renderer.getContext();
             
 
             // Get the pitches, and onsets array.
@@ -79,9 +80,6 @@
                 console.log(notes[i].name, notes[i].length);
             }
             
-            // Use the clef and treble from the notes array to set in Vex.Flow
-            startStave.addClef("{{clef|safe}}").addTimeSignature("{{timeSignature|safe}}");
-            startStave.setContext(context);
 
             const notesMeasure2_part1 = [new StaveNote({ keys: ["c/4"], duration: "8" }), new StaveNote({ keys: ["d/4"], duration: "8" }), new StaveNote({ keys: ["b/4"], duration: "8" }), new StaveNote({ keys: ["c/4", "e/4", "g/4"], duration: "8" })];
 
@@ -93,7 +91,7 @@
 
             const notesMeasure2 = notesMeasure2_part1.concat(notesMeasure2_part2);
 
-            var staveList = getStaves(Math.floor(notes.length), startStave);
+            var staveList = getStaves(startx, starty, staveWidth, staveHeight, contextWidth, contextHeight, Vex);
             console.log("Notes: ", notes)
             console.log("Staves: ", staveList)
             
@@ -101,9 +99,17 @@
                 staveList[i].setContext(context).draw();
             }
 
+            var firstStave = staveList[0];
+            firstStave.addTimeSignature("4/4");
+            firstStave.addClef("treble");
+            firstStave.setContext(context).draw();
+
             
         </script>
-    {% endif %}
+
+
+
+{% endif %}
 
     <script> var path = "/static/vexflow/src/vex.ts"; </script>
 
