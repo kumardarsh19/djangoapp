@@ -25,29 +25,33 @@ function isValidDuration(dur) {
 export function getStaveNotes(pitches, onsets, Vex) {
     const {Stave, StaveNote} = Vex.Flow;
     var ret = [];
-    let startIndex = pitches.findIndex(element => element != "##");
+    let startIndex = pitches.findIndex(element => element != "R");
     let currNote = pitches[startIndex];
-    let endIndex = pitches.slice(startIndex).findIndex(element => element != currNote);
+    let endIndex = startIndex + 1;
+    while (pitches[endIndex] == currNote && endIndex < pitches.length) endIndex++;
     
     console.log(startIndex);
     console.log(endIndex);
     console.log(pitches.length);
-    while (startIndex < pitches.length && endIndex < pitches.length) {
+    while (startIndex < pitches.length && endIndex < pitches.length && endIndex > startIndex) {
         let onsetSlice = onsets.slice(startIndex, onsets.findIndex(element => element == 0));
         let duration = Math.round(onsetSlice.length / 8);
+        currNote = [pitches[startIndex]];
         while (!isValidDuration(duration)) duration++;
-        let keys = [pitches[startIndex] + '/4'];
-        if (keys[0] == '##') keys = [];
-        let types = ['r', 'n'];
-        if (keys.length == 0) type = 'r';
+        let keys = currNote + '/4';
+        let type = 'n';
+        if (currNote == 'R') type = 'r';
+        console.log(keys, duration, types[keys.length]);
         let vexNote = new StaveNote({
             keys: keys,
             duration: duration,
-            type: types[keys.length - 1],
+            type: type,
         })
+        console.log('PUSHING')
         ret.push(vexNote);
         startIndex = endIndex;
-        endIndex = pitches.slice(startIndex).findIndex(element => element != currNote);
+        endIndex = startIndex + 1;
+        while (pitches[endIndex] == currNote && endIndex < pitches.length) endIndex++;
         if (startIndex == -1 || endIndex == -1) break;
     }
 

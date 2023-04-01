@@ -78,7 +78,7 @@ def getPitchList(sample_rate, time_domain_sig, plot=0):
 
         #Ensures we don't take logarithm of 0
         if (freq_ax[maxout] == 0):
-            notes.append("##")
+            notes.append("R")
             continue
 
         #Apply standard formula to determine number of steps away from A
