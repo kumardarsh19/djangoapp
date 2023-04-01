@@ -41,7 +41,7 @@ def home_view(request):
             signal = signal[np.where(signal != 0)[0][0]:]
             print("New signal size: %d" % signal.size)
             notesOnsets = getOnsetList(fs, signal)
-            notesPitches = getPitchList(fs, signal, tempo)
+            notesPitches = getPitchList(fs, signal)
             lenPitches = len(notesPitches)
             lenOnsets = len(notesOnsets)
             
