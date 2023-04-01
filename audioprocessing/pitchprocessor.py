@@ -59,7 +59,7 @@ def getPitchList(sample_rate, time_domain_sig, plot=0):
         #pass over negligible segments
         #may be changed later to consider rests
         if np.amax(segment) < LOW_THRESHOLD:
-            notes.append("##")
+            notes.append("R")
             continue
 
 

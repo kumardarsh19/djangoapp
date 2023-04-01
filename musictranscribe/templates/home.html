@@ -121,21 +121,18 @@
             
             
             //draw staves
-            var staveIndex = 0;
-            var totalDuration = 0;
-            console.log("StaveNotes.length: " + staveNotes.length);
-            console.log("StaveList.length: " + staveList.length);
-            for (let i=0; i<staveNotes.length && staveIndex<staveList.length; i++) {
-                console.log("iterating")
-                let measure = [];
-                let currNote = staveNotes[i];
-                let currstave = staveList[staveIndex];
-                measure.push(currNote);
-                totalDuration += (4 / currNote.duration);
-                if (totalDuration >= 4) {
-                    currNote.duration = Integer(totalDuration - 4);
-                    totalDuration = 0;
-                    staveIndex++;
+            for (let i=0; i<staveList.length; i++) {
+                let noteIndex = (i*4) % pitches.length;
+                let currNotes = [];
+                for (let j=noteIndex; j<noteIndex+4; j++) {
+                    let currPitch = pitches[i];
+                    let type = 'n';
+                    if ((pitches[i]) == 'R') {
+                        type = 'r';
+                    }
+                    let curr = new StaveNote({keys: [currPitch + '/4'], duration: '8', type: type});
+                    console.log(curr.keys)
+                    currNotes.push(curr)
                 }
                 console.log(measure);
                 Formatter.FormatAndDraw(context, currstave, measure);
