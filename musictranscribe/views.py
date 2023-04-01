@@ -25,6 +25,8 @@ def home_view(request):
             file = form.cleaned_data['file']
             timeSignature = form.cleaned_data['time_signature']
             clef = form.cleaned_data['clef']
+            tempo = int(form.cleaned_data['tempo'])
+            
             fs, signal = wavfile.read(file)
 
             # Check SNR >= 60 dB.
@@ -39,7 +41,7 @@ def home_view(request):
             signal = signal[np.where(signal != 0)[0][0]:]
             print("New signal size: %d" % signal.size)
             notesOnsets = getOnsetList(fs, signal)
-            notesPitches = getPitchList(fs, signal)
+            notesPitches = getPitchList(fs, signal, tempo)
             lenPitches = len(notesPitches)
             lenOnsets = len(notesOnsets)
             
