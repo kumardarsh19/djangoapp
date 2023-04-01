@@ -15,17 +15,17 @@ LNOTES = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
 
 
 '''
-Apply rectangular window of size sixteenth to signal
+Apply rectangular window of size window_size to signal
 starting at index starti
 '''
-def segmentSignal(signal, sixteenth, starti):
+def segmentSignal(signal, window_size, starti):
     segment = np.zeros(signal.shape)
-    segment[starti:starti+sixteenth] = signal[starti:starti+sixteenth]
+    segment[starti:starti+window_size] = signal[starti:starti+window_size]
     return segment
 
 
 
-def getPitchList(sample_rate, time_domain_sig, plot=0):
+def getPitchList(sample_rate, time_domain_sig, tempo=60, plot=0):
     notes = []
     
     if (plot):
@@ -39,20 +39,20 @@ def getPitchList(sample_rate, time_domain_sig, plot=0):
     clip_len = num_samples // sample_rate
     onesec = sample_rate
 
-    #determines size of window as 1/8 of a second
-    #currently assuming 60 bpm
-    sixteenth = onesec // 8
+    #determines size of window as 1/8 of a beat
+    
+    window_size = int((60 / tempo) * onesec // 8)
     df = sample_rate / num_samples
     time_ax = np.linspace(0, clip_len, num_samples)
     freq_ax = np.linspace(0, df * (num_samples - 1), num_samples)
 
     overlap = 0
     
-    #Apply window over signal ~16 times
-    #print("Pitch processor: iterating over %d samples with interval %d" % (int(num_samples), int(sixteenth)))
+    #Apply window over signal (clip_length * 8 * tempo/60 times)
+    print("Pitch processor: iterating over %d samples with interval %d" % (int(num_samples), int(window_size)))
 
-    for i in range(0, num_samples, sixteenth):
-        segment = segmentSignal(time_domain_sig, sixteenth, i)
+    for i in range(0, num_samples, window_size):
+        segment = segmentSignal(time_domain_sig, window_size, i)
 
         assert(segment.shape == time_domain_sig.shape)
 
@@ -94,12 +94,12 @@ def getNoteGraph(fileName, plot=True):
     num_samples = len(time_domain_sig)
     clip_len = num_samples // sample_rate
     onesec = sample_rate
-    sixteenth = onesec // 4
+    window_size = onesec // 4
     df = sample_rate / num_samples
     time_ax = np.linspace(0, clip_len, num_samples)
     freq_ax = np.linspace(0, df * (num_samples - 1), num_samples)
 
-    segment = segmentSignal(time_domain_sig, sixteenth, int(sample_rate * 2.5))
+    segment = segmentSignal(time_domain_sig, window_size, int(sample_rate * 2.5))
 
     freq_domain_sig = fft(segment)
 
@@ -119,7 +119,7 @@ def getNoteGraph(fileName, plot=True):
         plt.xlim([0, clip_len])
 
         plt.subplot(4, 1, 2)
-        plt.plot(windows.gaussian(sixteenth, std=sixteenth//50))
+        plt.plot(windows.gaussian(window_size, std=window_size//50))
 
         plt.subplot(4, 1, 3)
         plt.plot(time_ax, segment)
