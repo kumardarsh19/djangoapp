@@ -14,3 +14,7 @@ export function getStaves(startx, starty, width, height, cw, ch, Vex) {
     return ret;
     
 }
+
+export function getBaseLog(x, y) {
+    return Math.log(y) / Math.log(x);
+}
