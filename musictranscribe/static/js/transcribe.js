@@ -25,7 +25,7 @@ export function getNoteList(pitches , onsets) {
         } else {
             // Incorporate a rest note
             // print("rest")
-            let note = new Note('##', duration/8);
+            let note = new Note('R', duration/8);
             notes.push(note);
             duration = 1;
         }
@@ -35,7 +35,7 @@ export function getNoteList(pitches , onsets) {
         let note = new Note(pitches[length-1], duration/8);
         notes.push(note);
     } else {
-        let note = new Note('##', duration/8);
+        let note = new Note('R', duration/8);
         notes.push(note);
     }
     return notes;

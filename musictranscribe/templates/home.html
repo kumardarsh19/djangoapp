@@ -109,10 +109,11 @@
                 let currNotes = [];
                 for (let j=noteIndex; j<noteIndex+4; j++) {
                     let currPitch = pitches[i];
-                    if ((pitches[i]) == '##') {
-                        currPitch = 'c';
+                    let type = 'n';
+                    if ((pitches[i]) == 'R') {
+                        type = 'r';
                     }
-                    let curr = new StaveNote({keys: [currPitch + '/4'], duration: '8'});
+                    let curr = new StaveNote({keys: [currPitch + '/4'], duration: '8', type: type});
                     console.log(curr.keys)
                     currNotes.push(curr)
                 }
