@@ -8,6 +8,8 @@ from audioprocessing.signaltonoise import signaltonoise
 from .forms import AudioForm
 import numpy as np
 
+import json
+
 def validSNR(signal):
     snr = signaltonoise(signal)
     if isinstance(snr, float):
@@ -15,6 +17,35 @@ def validSNR(signal):
     else:
         snr = abs(snr[0])
     return snr >= 60
+
+def generateNote(key, duration):
+    note = {}
+    note['key'] = key + '/4'
+    note[duration] = duration
+
+    return note
+
+def integrate(pitches, onsets):
+    notes = []
+    duration = 1
+
+    for i in range(1, len(pitches)):
+        if (pitches[i] == pitches[i-1]): duration += 1
+        elif (onsets[i-1] == 1):
+            notes.append(generateNote(pitches[i-1], duration))
+            duration = 1
+        else:
+            notes.append(generateNote('R', duration))
+            duration = 1
+
+    if (onsets[-1] == 1):
+        notes.append(generateNote(pitches[-1], duration))
+    else:
+        notes.append(generateNote('R', duration))
+
+    return json.dumps(notes, indent=1)
+
+
 
 def home_view(request):
     context = {'form': AudioForm()}
@@ -47,6 +78,7 @@ def home_view(request):
             
             assert(lenPitches == lenOnsets)
             
+            context['itegrated'] = integrate(notesPitches, notesOnsets)
             context['numBars'] = getNumBars(notesPitches, timeSignature)
             context['pitches'] = notesPitches
             context['onsets'] = notesOnsets
