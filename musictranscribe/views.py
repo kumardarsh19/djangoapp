@@ -35,11 +35,15 @@ def home_view(request):
 
             # Call rhythm and pitch processors.
             signal = normalize(signal)
+            print("Original signal size: %d" % signal.size)
+            signal = signal[np.where(signal != 0)[0][0]:]
+            print("New signal size: %d" % signal.size)
             notesOnsets = getOnsetList(fs, signal)
             notesPitches = getPitchList(fs, signal)
-            numPitch = len(notesPitches)
-            numOn = len(notesOnsets)
-            assert(numPitch == numOn)
+            lenPitches = len(notesPitches)
+            lenOnsets = len(notesOnsets)
+            
+            assert(lenPitches == lenOnsets)
             
             context['numBars'] = getNumBars(notesPitches, timeSignature)
             context['pitches'] = notesPitches
