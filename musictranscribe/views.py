@@ -21,7 +21,10 @@ def validSNR(signal):
 def generateNote(key, duration):
     note = {}
     note['key'] = key + '/4'
-    note[duration] = duration
+    note['duration'] = duration
+
+    if (key == 'R'): note['typ'] = 'r'
+    else: note['typ'] = 'n'
 
     return note
 
@@ -78,7 +81,8 @@ def home_view(request):
             
             assert(lenPitches == lenOnsets)
             
-            context['itegrated'] = integrate(notesPitches, notesOnsets)
+            context['integrated'] = integrate(notesPitches, notesOnsets)
+            print("Integrated list: ", context['integrated'])
             context['numBars'] = getNumBars(notesPitches, timeSignature)
             context['pitches'] = notesPitches
             context['onsets'] = notesOnsets
