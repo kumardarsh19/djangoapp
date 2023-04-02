@@ -56,7 +56,7 @@
             
             
             // Start of Transcription code
-            const { Renderer, Stave, Formatter, StaveNote, Beam } = Vex.Flow;
+            const { Renderer, Stave, Formatter, StaveNote, Beam, TickContext } = Vex.Flow;
             Renderer.DEBUG = true;
             Stave.DEBUG = true;
             Formatter.DEBUG = true;
@@ -66,7 +66,7 @@
             // Create an SVG renderer and attach it to the DIV element named "boo".
             const div = document.getElementById("musicsheet");
             const renderer = new Renderer(div, Renderer.Backends.SVG);
-            
+            var tickContext = new TickContext();
             var startx = 50;
             var starty = 100;
 
@@ -78,7 +78,7 @@
 
             var timeSigNum = 4;
             var timeSigDenom = 4;
-
+            var timeSignature = "4/4";
             var clef = "treble";
 
             
@@ -99,26 +99,17 @@
             var notelist = integrated;
 
             var staveNotes = convertToVex(integrated, Vex);
-            
-            for (let i=0; i<staveNotes.length; i++) {
-
-            }
-
-            
+                        
 
             var staveList = getStaves(startx, starty, staveWidth, staveHeight, contextWidth, contextHeight, Vex);
 
             staveList.forEach(stave => {
-                stave.setContext(context);
+                stave.setContext(context).draw();
             });
 
+            staveList[0].addClef(clef).addTimeSignature(timeSignature).draw();
             var totalDuration = 0;
-            staveNotes.forEach(staveNote => {
-                totalDuration += 1 / staveNote.duration;
-                staveNote.setStave(staveList[Math.floor(totalDuration / 8)]);
-                
-            });
-
+            
 
 
             console.log("Notes: ", staveNotes)
@@ -128,16 +119,18 @@
             firstStave.addTimeSignature(timeSigNum + "/" + timeSigDenom);
             firstStave.addClef(clef);
             
-            
+            for (let i=0; i<staveList.length; i++) {
+                let currStave = staveList[i];
+                let measure = [];
+                for (let j=i*4; j < (i*4 + 4) && j<staveNotes.length; j++) {
+                    let currNote = staveNotes[j];
+                    currNote.setStave(currStave);
+                    measure.push(currNote);
+                }
+                console.log(measure);
+                if (measure.length > 0) Formatter.FormatAndDraw(context, currStave, measure, true);
+            }
 
-            staveList.forEach(stave => {
-                stave.setContext(context).draw();
-            });
-
-           
-            var noteIndex = 0;
-            //draw staves
-            
 
             console.log(staveList);
             console.log(staveNotes);
