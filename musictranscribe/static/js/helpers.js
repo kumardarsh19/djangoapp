@@ -22,6 +22,8 @@ export function getBaseLog(x, y) {
 function isValidDuration(dur) {
     return dur == 1 || dur == 2 || dur == 4 || dur == 8 || dur == 16;
 }
+
+
 export function getStaveNotes(pitches, onsets, Vex) {
     const {Stave, StaveNote} = Vex.Flow;
     var ret = [];
@@ -54,6 +56,21 @@ export function getStaveNotes(pitches, onsets, Vex) {
         while (pitches[endIndex] == currNote && endIndex < pitches.length) endIndex++;
         if (startIndex == -1 || endIndex == -1) break;
     }
+
+    return ret;
+}
+
+
+export function convertToVex(notes, Vex) {
+    var ret = []
+    notes.forEach(note => {
+        ret.push(new Vex.Flow.StaveNote({
+            keys: [note.key],
+            duration: 4 * Math.ceil(8 / note.duration),
+            type: note.typ,
+        }));
+
+    });
 
     return ret;
 }
