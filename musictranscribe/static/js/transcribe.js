@@ -1,8 +1,9 @@
 // Note class for Vex.Flow
 export class Note {
-    constructor(name, length) {
+    constructor(name, length, type) { //type 'n' is normal note, 'r' is rest
         this.name = name;
         this.length = length;
+        this.type = type;
     }
 }
 
@@ -19,7 +20,7 @@ export function getNoteList(pitches , onsets) {
         } else if (onsets[i-1] == 1) {
             // Incorporate a regular note
             // print("regular")
-            let note = new Note(pitches[i-1], duration/8);
+            let note = new Note([pitches[i-1]], duration/8, 'n');
             notes.push(note);
             duration = 1;
         } else {
@@ -32,7 +33,7 @@ export function getNoteList(pitches , onsets) {
     }
     // Add the last note.
     if (onsets[length-1] == 1) {
-        let note = new Note(pitches[length-1], duration/8);
+        let note = new Note([pitches[length-1]], duration/8, 'n');
         notes.push(note);
     } else {
         let note = new Note('R', duration/8);
