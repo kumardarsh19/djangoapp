@@ -24,10 +24,11 @@ export function isValidDuration(dur) {
 }
 
 export function formatDuration(duration) { //assume duration of 8 is a quarter note
-    if (duration <= 8) return 8;
-    if (duration <= 16) return 4;
-    if (duration > 24 && duration <= 32) return 2;
-    if (duration > 40 && duration <= 64) return 1;
+    
+    if (duration <= 8) return '8';
+    else if (duration <= 16) return '4';
+    else if (duration > 24 && duration <= 32) return '2';
+    else return '1';
 }
 
 
@@ -70,10 +71,13 @@ export function getStaveNotes(pitches, onsets, Vex) {
 
 export function convertToVex(notes, Vex) {
     var ret = []
+    
     notes.forEach(note => {
+        console.log(note.duration);
+        console.log(formatDuration(note.duration));
         ret.push(new Vex.Flow.StaveNote({
             keys: [note.key],
-            duration: formatDuration(duration),
+            duration: formatDuration(note.duration),
             type: note.typ,
         }));
 
