@@ -34,6 +34,11 @@
         </form>
     </div>
 
+    
+    <div id="test">
+        {% if integrated %} {{integrated|safe}} {% endif %}
+    </div>
+    
     <div id="notebox" >
         {%if notes %}
             {{notes}}
@@ -47,10 +52,16 @@
         <script type="module">
             import { getNoteList, Note } from "{% static 'js/transcribe.js' %}"
            
-            import { getStaves, getStaveNotes } from "{% static 'js/helpers.js' %}"
+            import { getStaves, getStaveNotes, convertToVex } from "{% static 'js/helpers.js' %}"
+            
+            
             // Start of Transcription code
             const { Renderer, Stave, Formatter, StaveNote, Beam } = Vex.Flow;
-
+            Renderer.DEBUG = true;
+            Stave.DEBUG = true;
+            Formatter.DEBUG = true;
+            StaveNote.DEBUG = true;
+            Beam.DEBUG = true;
 
             // Create an SVG renderer and attach it to the DIV element named "boo".
             const div = document.getElementById("musicsheet");
@@ -79,64 +90,54 @@
             // Get the pitches, and onsets array.
             var pitches = {{pitches|safe}};
             var onsets = {{onsets|safe}};
-            var notes = getNoteList(pitches, onsets);
-            for (let i = 0; i < notes.length; i++) {
-                //console.log(notes[i].name, notes[i].length);
+            var integrated = {{integrated|safe}};
+            console.log("Integrated: " + integrated);
+            integrated.forEach(note => {
+                console.log("key: " + note.key);
+                console.log("duration: " + note.duration);
+            });
+            var notelist = integrated;
+
+            var staveNotes = convertToVex(integrated, Vex);
+            
+            for (let i=0; i<staveNotes.length; i++) {
+
             }
+
             
 
-            const notesMeasure2_part1 = [new StaveNote({ keys: ["c/4"], duration: "8" }), new StaveNote({ keys: ["d/4"], duration: "8" }), new StaveNote({ keys: ["b/4"], duration: "8" }), new StaveNote({ keys: ["c/4", "e/4", "g/4"], duration: "8" })];
-
-            const notesMeasure2_part2 = [new StaveNote({ keys: ["c/4"], duration: "8" }), new StaveNote({ keys: ["d/4"], duration: "8" }), new StaveNote({ keys: ["b/4"], duration: "8" }), new StaveNote({ keys: ["c/4", "e/4", "g/4"], duration: "8" })];
-
-            // Create the beams for 8th notes in second measure.
-            const beam1 = new Beam(notesMeasure2_part1);
-            const beam2 = new Beam(notesMeasure2_part2);
-
-            const notesMeasure2 = notesMeasure2_part1.concat(notesMeasure2_part2);
-
             var staveList = getStaves(startx, starty, staveWidth, staveHeight, contextWidth, contextHeight, Vex);
-            console.log("Notes: ", notes)
+
+            staveList.forEach(stave => {
+                stave.setContext(context);
+            });
+
+            var totalDuration = 0;
+            staveNotes.forEach(staveNote => {
+                totalDuration += 1 / staveNote.duration;
+                staveNote.setStave(staveList[Math.floor(totalDuration / 8)]);
+                
+            });
+
+
+
+            console.log("Notes: ", staveNotes)
             console.log("Staves: ", staveList)
             
             var firstStave = staveList[0];
             firstStave.addTimeSignature(timeSigNum + "/" + timeSigDenom);
             firstStave.addClef(clef);
             
-            var testNote = new StaveNote({
-                keys: ['R/4'],
-                duration: '4',
-                type: 'r'
-            })
+            
 
-            Formatter.FormatAndDraw(context, firstStave, [testNote]);
-
-            console.log("testNote: " + testNote)
-            console.log(testNote)
-            var staveNotes = getStaveNotes(pitches, onsets, Vex);
-            staveNotes.forEach(stave => {
-                stave.setContext(context);
+            staveList.forEach(stave => {
+                stave.setContext(context).draw();
             });
 
-            
-            
+           
+            var noteIndex = 0;
             //draw staves
-            for (let i=0; i<staveList.length; i++) {
-                let noteIndex = (i*4) % pitches.length;
-                let currNotes = [];
-                for (let j=noteIndex; j<noteIndex+4; j++) {
-                    let currPitch = pitches[i];
-                    let type = 'n';
-                    if ((pitches[i]) == 'R') {
-                        type = 'r';
-                    }
-                    let curr = new StaveNote({keys: [currPitch + '/4'], duration: '8', type: type});
-                    console.log(curr.keys)
-                    currNotes.push(curr)
-                }
-                console.log(measure);
-                Formatter.FormatAndDraw(context, currstave, measure);
-            }
+            
 
             console.log(staveList);
             console.log(staveNotes);
