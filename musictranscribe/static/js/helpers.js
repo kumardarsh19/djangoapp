@@ -19,9 +19,18 @@ export function getBaseLog(x, y) {
     return Math.log(y) / Math.log(x);
 }
 
-function isValidDuration(dur) {
+export function isValidDuration(dur) {
     return dur == 1 || dur == 2 || dur == 4 || dur == 8 || dur == 16;
 }
+
+export function formatDuration(duration) { //assume duration of 8 is a quarter note
+    if (duration <= 8) return 8;
+    if (duration <= 16) return 4;
+    if (duration > 24 && duration <= 32) return 2;
+    if (duration > 40 && duration <= 64) return 1;
+}
+
+
 export function getStaveNotes(pitches, onsets, Vex) {
     const {Stave, StaveNote} = Vex.Flow;
     var ret = [];
@@ -54,6 +63,21 @@ export function getStaveNotes(pitches, onsets, Vex) {
         while (pitches[endIndex] == currNote && endIndex < pitches.length) endIndex++;
         if (startIndex == -1 || endIndex == -1) break;
     }
+
+    return ret;
+}
+
+
+export function convertToVex(notes, Vex) {
+    var ret = []
+    notes.forEach(note => {
+        ret.push(new Vex.Flow.StaveNote({
+            keys: [note.key],
+            duration: formatDuration(duration),
+            type: note.typ,
+        }));
+
+    });
 
     return ret;
 }
