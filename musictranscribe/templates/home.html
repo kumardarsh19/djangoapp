@@ -56,6 +56,23 @@
 
         <div id="musicsheet"></div>
         <script type="module">
+            function getTimeSignature(timeSignature) {
+                switch (timeSignature) {
+                    case 1:
+                        timeSignature = "4/4";
+                    case 0.75:
+                        timeSignature = "3/4";
+                    case 0.5:
+                        timeSignature = "2/4";
+                    case 0.25:
+                        timeSignature = "1/4";
+                    case 0.752: // added a 2 at end since 6/8 = 3/4 in terms of decimal value
+                        timeSignature = "6/8";
+                    case 0.375:
+                        timeSignature = "3/8";
+                }
+            }
+
             import { getNoteList, Note } from "{% static 'js/transcribe.js' %}"
             import { getStaves, getStaveNotes, convertToVex } from "{% static 'js/helpers.js' %}"
             
@@ -78,32 +95,10 @@
             const div = document.getElementById("musicsheet");
             const renderer = new Renderer(div, Renderer.Backends.SVG);
             var tickContext = new TickContext();
-            var startx = 50;
-            var starty = 100;
-
-            var staveWidth = 400;
-            var staveHeight = 90;
-
-            var contextWidth = 3;
-            var contextHeight = 100;
 
             var timeSigNum = 4;
             var timeSigDenom = 4;
-            let timeSignature = {{timeSignature|safe}};
-            switch (timeSignature) {
-                case 1:
-                    timeSignature = "4/4";
-                case 0.75:
-                    timeSignature = "3/4";
-                case 0.5:
-                    timeSignature = "2/4";
-                case 0.25:
-                    timeSignature = "1/4";
-                case 0.752:
-                    timeSignature = "6/8";
-                case 0.375:
-                    timeSignature = "3/8";
-            }
+            let timeSignature = getTimeSignature({{timeSignature|safe}});
             let clef = "treble";
             try {
                 //TODO: this will not work for some reason.
@@ -111,11 +106,7 @@
             } catch (e) {
                 console.log("Obtaining clef error + ", e);
             }
-
-            renderer.resize(staveWidth*contextWidth, staveHeight * contextHeight);
-            var context = renderer.getContext();
             
-
             // Get the pitches, and onsets array.
             var pitches = {{pitches|safe}};
             var onsets = {{onsets|safe}};
@@ -125,11 +116,25 @@
                 console.log("key: " + note.key);
                 console.log("duration: " + note.duration);
             });
+
+            // Set sizing of render.
+            // TODO: set the context height to be dependent on number of staves. 
+            var startx = 50;
+            var starty = 100;
+
+            var staveWidth = 400;
+            var staveHeight = 90;
+
+            var contextWidth = 3;
+            var contextHeight = 100;
+
+            renderer.resize(staveWidth*contextWidth, staveHeight * contextHeight);
+            var context = renderer.getContext();
+            
             var notelist = integrated;
 
             var staveNotes = convertToVex(integrated, Vex);
                         
-
             var staveList = getStaves(startx, starty, staveWidth, staveHeight, contextWidth, contextHeight, Vex);
 
             staveList.forEach(stave => {
@@ -142,9 +147,9 @@
             console.log("Notes: ", staveNotes)
             console.log("Staves: ", staveList)
             
-            var firstStave = staveList[0];
+            {% comment %} var firstStave = staveList[0];
             firstStave.addTimeSignature(timeSigNum + "/" + timeSigDenom);
-            firstStave.addClef(clef);
+            firstStave.addClef(clef); {% endcomment %}
             
             for (let i=0; i<staveList.length; i++) {
                 let currStave = staveList[i];
@@ -157,16 +162,11 @@
                 console.log(measure);
                 if (measure.length > 0) Formatter.FormatAndDraw(context, currStave, measure, true);
             }
-
-
-            console.log(staveList);
-            console.log(staveNotes);
-            console.log(context);
+            console.log("staveList: " + staveList);
+            console.log("staveNotes: " + staveNotes);
+            console.log("context: " + context);
         </script>
-
-
-
-{% endif %}
+    {% endif %}
 
     <script> var path = "/static/vexflow/src/vex.ts"; </script>
 

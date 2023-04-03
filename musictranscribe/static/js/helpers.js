@@ -7,9 +7,7 @@ export function getStaves(startx, starty, width, height, cw, ch, Vex) {
             ret.push(curr);
         }
     }
-
     return ret;
-    
 }
 
 export function getBaseLog(x, y) {
