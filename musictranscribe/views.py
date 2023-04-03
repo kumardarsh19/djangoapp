@@ -7,7 +7,7 @@ from audioprocessing.preprocessing import normalize
 from audioprocessing.signaltonoise import signaltonoise
 from .forms import AudioForm
 import numpy as np
-
+import math
 import json
 
 def validSNR(signal):
@@ -21,7 +21,7 @@ def validSNR(signal):
 def generateNote(key, duration):
     note = {}
     note['key'] = key + '/4'
-    note['duration'] = duration
+    note['duration'] = str(duration)
 
     if (key == 'R'): note['typ'] = 'r'
     else: note['typ'] = 'n'
@@ -46,8 +46,41 @@ def integrate(pitches, onsets):
     else:
         notes.append(generateNote('R', duration))
 
-    return json.dumps(notes, indent=1)
+    return notes
 
+    
+
+def splitNotes(notelist, time_signature="4/4"):
+    newNotes = []
+    unitsPerMeasure = 8 * int(time_signature[-1])
+
+    measureIndex = 0
+    totalDuration = 0
+    for i in range(len(notelist)):
+        key, duration, type = notelist[i]['key'], int(notelist[i]['duration']), notelist[i]['typ']
+        totalDuration += duration
+        if (totalDuration <= unitsPerMeasure):
+            newNotes.append(notelist[i])
+        else:
+            overflow = totalDuration - unitsPerMeasure
+            duration0 = duration - overflow
+            for dur in [duration0, overflow]:
+                if (dur > 0): newNotes.append(generateNote(key[0], dur))
+            totalDuration = overflow
+    
+    
+
+    return newNotes
+
+def formatDuration(duration, time_signature='4/4'):
+    unitsPerMeasure = 8 * int(time_signature[-1])
+    margin = 2
+    duration = int(duration)
+    assert(duration > 0)
+    if (duration <= 4 + margin): return '8' #eighth note
+    elif (duration <= 8 + 2*margin): return "4" #quarter note
+    elif (duration <= 16 + 4*margin): return "2" #half note
+    else: return "1" #whole note
 
 
 def home_view(request):
@@ -80,9 +113,20 @@ def home_view(request):
             lenOnsets = len(notesOnsets)
             
             assert(lenPitches == lenOnsets)
+            integratedList = integrate(notesPitches, notesOnsets)
+            context['integrated'] = json.dumps(integratedList, indent=1)
             
-            context['integrated'] = integrate(notesPitches, notesOnsets)
             print("Integrated list: ", context['integrated'])
+
+            splitList = splitNotes(integratedList, timeSignature)
+            print("After splitting long notes: ", json.dumps(splitList, indent=1))
+
+            for note in splitList:
+                duration = note['duration']
+                note['duration'] = formatDuration(duration, timeSignature)
+            for n in splitList:
+                assert(n['duration'] in ['1', '2', '4', '8'])
+            context['formatted'] = json.dumps(splitList, indent=1)
             context['numBars'] = getNumBars(notesPitches, timeSignature)
             context['pitches'] = notesPitches
             context['onsets'] = notesOnsets
