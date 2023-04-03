@@ -25,7 +25,7 @@ def integrate(pitches, onsets):
 
 def splitNotes(notelist, time_signature="4/4"):
     newNotes = []
-    unitsPerMeasure = int(time_signature[-1])
+    unitsPerMeasure = 8 * int(time_signature[-1])
     measureIndex = 0
     totalDuration = 0
     for i in range(len(notelist)):
