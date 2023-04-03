@@ -43,9 +43,10 @@ def detect_beats_channels(audio_data) -> np.array:
         print("Same beats")
         return audio_data
 
-def getOnsetList(sampling_rate, audio_data):
+def getOnsetList(sampling_rate, audio_data, tempo=60):
     # plot_time(audio_data, len(audio_data) // sampling_rate, len(audio_data))
-    time_interval = sampling_rate // 8
+
+    time_interval = int((60 / tempo) * sampling_rate // 8)
     samples = len(audio_data)
     
     audio_length = samples // sampling_rate
