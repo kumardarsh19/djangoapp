@@ -1,6 +1,3 @@
-
-
-
 export function getStaves(startx, starty, width, height, cw, ch, Vex) {
     const {Stave} = Vex.Flow;
     var ret = [];
@@ -24,13 +21,11 @@ export function isValidDuration(dur) {
 }
 
 export function formatDuration(duration) { //assume duration of 8 is a quarter note
-    
     if (duration <= 8) return '8';
     else if (duration <= 16) return '4';
     else if (duration > 24 && duration <= 32) return '2';
     else return '1';
 }
-
 
 export function getStaveNotes(pitches, onsets, Vex) {
     const {Stave, StaveNote} = Vex.Flow;
@@ -64,10 +59,8 @@ export function getStaveNotes(pitches, onsets, Vex) {
         while (pitches[endIndex] == currNote && endIndex < pitches.length) endIndex++;
         if (startIndex == -1 || endIndex == -1) break;
     }
-
     return ret;
 }
-
 
 export function convertToVex(notes, Vex) {
     var ret = []
@@ -80,7 +73,6 @@ export function convertToVex(notes, Vex) {
             duration: formatDuration(note.duration),
             type: note.typ,
         }));
-
     });
 
     return ret;

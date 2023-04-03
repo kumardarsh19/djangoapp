@@ -79,15 +79,17 @@ def home_view(request):
             lenPitches = len(notesPitches)
             lenOnsets = len(notesOnsets)
             
+            print(f"lenPitches: {lenPitches}; lenOnsets: {lenOnsets}")
             assert(lenPitches == lenOnsets)
             
             context['integrated'] = integrate(notesPitches, notesOnsets)
-            print("Integrated list: ", context['integrated'])
+            print(f"Integrated list: {context['integrated']}")
             context['numBars'] = getNumBars(notesPitches, timeSignature)
             context['pitches'] = notesPitches
             context['onsets'] = notesOnsets
             context['clef'] = clef
             context['timeSignature'] = timeSignature
+            print(f"time_signature: {timeSignature}")
             return render(request, 'home.html', context)
     return render(request, "home.html", context)
 

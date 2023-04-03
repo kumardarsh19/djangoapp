@@ -51,9 +51,7 @@
         <div id="musicsheet"></div>
         <script type="module">
             import { getNoteList, Note } from "{% static 'js/transcribe.js' %}"
-           
             import { getStaves, getStaveNotes, convertToVex } from "{% static 'js/helpers.js' %}"
-            
             
             // Start of Transcription code
             const { Renderer, Stave, Formatter, StaveNote, Beam, TickContext } = Vex.Flow;
@@ -78,10 +76,28 @@
 
             var timeSigNum = 4;
             var timeSigDenom = 4;
-            var timeSignature = "4/4";
-            var clef = "treble";
-
-            
+            let timeSignature = {{timeSignature|safe}};
+            switch (timeSignature) {
+                case 1:
+                    timeSignature = "4/4";
+                case 0.75:
+                    timeSignature = "3/4";
+                case 0.5:
+                    timeSignature = "2/4";
+                case 0.25:
+                    timeSignature = "1/4";
+                case 0.752:
+                    timeSignature = "6/8";
+                case 0.375:
+                    timeSignature = "3/8";
+            }
+            let clef = "treble";
+            try {
+                //TODO: this will not work for some reason.
+                clef = {{clef}};
+            } catch (e) {
+                console.log("Obtaining clef error + ", e);
+            }
 
             renderer.resize(staveWidth*contextWidth, staveHeight * contextHeight);
             var context = renderer.getContext();
@@ -109,8 +125,6 @@
 
             staveList[0].addClef(clef).addTimeSignature(timeSignature).draw();
             var totalDuration = 0;
-            
-
 
             console.log("Notes: ", staveNotes)
             console.log("Staves: ", staveList)
@@ -135,10 +149,6 @@
             console.log(staveList);
             console.log(staveNotes);
             console.log(context);
-
-            
-            
-            
         </script>
 
 
