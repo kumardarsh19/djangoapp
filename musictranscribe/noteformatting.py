@@ -42,7 +42,6 @@ def splitNotes(notelist, time_signature="4/4"):
     return newNotes
 
 def formatDuration(duration, time_signature='4/4'):
-    unitsPerMeasure = 8 * int(time_signature[-1])
     margin = 2
     duration = int(duration)
     assert(duration > 0)
@@ -50,3 +49,24 @@ def formatDuration(duration, time_signature='4/4'):
     elif (duration <= 8 + 2*margin): return "4" #quarter note
     elif (duration <= 16 + 4*margin): return "2" #half note
     else: return "1" #whole note
+
+def getNumStaves(notelist, time_signature='4/4'):
+    # Determine how many eighth notes we can get per stave.
+    time_signature_frac = time_signature.split('/')
+    numerator, denominator = int(time_signature_frac[0]), int(time_signature_frac[1])
+    if denominator == 4: staveDuration = 2 * numerator
+    elif denominator == 8: staveDuration = numerator
+
+    # Determine how many staves we need.
+    totalDuration = 0
+    numStaves = 1
+    for i in range(len(notelist)):
+        duration = int(notelist[i]['duration'])
+        totalDuration += duration
+        if (totalDuration > staveDuration):
+            numStaves += 1
+            totalDuration = duration
+
+    # Round to the nearest multiple of 3.
+    print(f"numStaves: {numStaves}\nnumStaves rounded to multiple of 3: {3 * round(numStaves / 3)}")
+    return 3 * round(numStaves / 3)

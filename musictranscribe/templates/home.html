@@ -118,7 +118,9 @@
             });
 
             // Set sizing of render.
-            // TODO: set the context height to be dependent on number of staves. 
+            let numberStaves = {{number_staves|safe}}
+            console.log("numStaves: " + numberStaves);
+
             var startx = 50;
             var starty = 100;
 

@@ -10,7 +10,7 @@ import numpy as np
 import math
 import json
 
-from .noteformatting import *
+from musictranscribe.noteformatting import *
 
 def validSNR(signal):
     snr = signaltonoise(signal)
@@ -38,24 +38,30 @@ def home_view(request):
                 print(f"SNR is too low. Please upload a better quality audio file.")
                 context['reject'] = True
                 return render(request, "home.html", context)
-
-            # Call rhythm and pitch processors.
+            
+            # Normalize signal.
             signal = normalize(signal)
             print("Original signal size: %d" % signal.size)
             signal = signal[np.where(signal != 0)[0][0]:]
             print("New signal size: %d" % signal.size)
+
+            # Call rhythm and pitch processors.
             notesOnsets = getOnsetList(fs, signal)
             notesPitches = getPitchList(fs, signal, tempo)
             lenPitches = len(notesPitches)
             lenOnsets = len(notesOnsets)
-            
             print(f"lenPitches: {lenPitches}; lenOnsets: {lenOnsets}")
             assert(lenPitches == lenOnsets)
+
+            # Integrate the rhythm and pitch processor outputs.
             integratedList = integrate(notesPitches, notesOnsets)
             context['integrated'] = json.dumps(integratedList, indent=1)
-            
             print("Integrated list: ", context['integrated'])
 
+            # Calculate number of staves needed with total duration of notes.
+            context['number_staves'] = getNumStaves(integratedList, timeSignature)
+
+            # Split notes that are too long due to Vexflow limitations.
             splitList = splitNotes(integratedList, timeSignature)
             print("After splitting long notes: ", json.dumps(splitList, indent=1))
 
