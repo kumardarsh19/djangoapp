@@ -53,6 +53,8 @@
             import { getNoteList, Note } from "{% static 'js/transcribe.js' %}"
            
             import { getStaves, getStaveNotes, convertToVex } from "{% static 'js/helpers.js' %}"
+            import { jsPDF } from "jspdf";
+            import "svg2pdf.js";
             
             
             // Start of Transcription code
@@ -136,6 +138,10 @@
             console.log(staveNotes);
             console.log(context);
 
+            const doc = new jsPDF();
+            const svgElement = div.childNodes[0];
+            doc.svg(svgElement).then(() => doc.save("score.pdf"));
+            console.log("Saved score.pdf");
             
             
             
