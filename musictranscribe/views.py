@@ -10,7 +10,7 @@ import numpy as np
 import math
 import json
 
-from noteformatting import *
+from .noteformatting import *
 
 def validSNR(signal):
     snr = signaltonoise(signal)
