@@ -25,13 +25,13 @@ def integrate(pitches, onsets):
 
 def splitNotes(notelist, time_signature="4/4"):
     newNotes = []
-    unitsPerMeasure = 8 * int(time_signature[-1])
+    unitsPerMeasure = int(time_signature[-1])
     measureIndex = 0
     totalDuration = 0
     for i in range(len(notelist)):
         key, duration, type = notelist[i]['key'], int(notelist[i]['duration']), notelist[i]['typ']
         totalDuration += duration
-        if (totalDuration <= unitsPerMeasure):
+        if (totalDuration < unitsPerMeasure):
             newNotes.append(notelist[i])
         else:
             overflow = totalDuration - unitsPerMeasure
