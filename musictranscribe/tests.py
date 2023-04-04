@@ -5,19 +5,11 @@ from musictranscribe.noteformatting import *
 
 class FormattingTestCase(TestCase):
     def setUp(self):
-        self.fourQuarterNotes = [{
-            'key': 'C/4',
-            'duration': '4',
-            'typ': 'n'
-        }] * 4
+        self.fourQuarterNotes = [generateNote('C', 8*8)] * 4
 
-        self.fourHalfNotes = [{
-            'key': 'C/4',
-            'duration': '2',
-            'typ': 'n'
-        }] * 4
+        self.fourHalfNotes = [generateNote('C', 16*8)] * 4
 
-        self.sixBeatNote = [generateNote('C', 6), generateNote('C', 2)]
+        self.sixBeatNote = [generateNote('C', 6*8*8), generateNote('C', 2*8*8)]
 
     def testSplitNotes(self):
         print("Testing splitNotes...")
