@@ -3,6 +3,7 @@ import math
 
 def generateNote(key, duration):
     note = {}
+    if '/4' in key: key = key[0]
     note['key'] = key + '/4'
     note['duration'] = str(duration)
     if (key == 'R'): note['typ'] = 'r'
@@ -31,44 +32,23 @@ def splitNotes(notelist, time_signature="4/4"):
     for note in notelist:
         key, duration = note['key'], int(note['duration'])
         
-        #if note is larger than a whole note, split it into as many whole notes as possible
-        #then run the normal code on the remaining beats
-        if (duration > 32):
-            numWhole = duration // 32
-            for i in range(numWhole): newNotes.append(generateNote(key, 32))
-            duration = duration % 32
+        while (duration >= 32):
+            newNotes.append(generateNote(key, 32))
+            duration -= 32
 
-        if (duration == 0): continue
-        #if duration was originally 56, now it should be 56-32 = 24
-        assert(0 < duration <= 32)
-        assert(duration % 4 == 0)
+        while (duration >= 16):
+            newNotes.append(generateNote(key, 16))
+            duration -= 16
+
+        while (duration >= 8):
+            newNotes.append(generateNote(key, 8))
+            duration -= 8
+
+        while (duration >= 4):
+            newNotes.append(generateNote(key, 4))
+            duration -= 4
+
         
-        
-        #check for 12, 24
-        if (duration % 3 == 0):
-            newNotes.append(generateNote(key, int(duration * 2 / 3)))
-            newNotes.append(generateNote(key, int(duration / 3)))
-
-
-        elif (duration % 8 == 0 or duration == 4): #4, 8, 16, 32
-            newNotes.append(note)
-
-        elif (duration == 28):
-            for dur in [16, 8, 4]:
-                newNotes.append(generateNote(key, dur))
-
-        elif (duration == 20):
-            for dur in [16, 4]:
-                newNotes.append(generateNote(key, dur))
-            
-        else:
-            print('found else case!')
-            print(note)
-            assert(0)
-            continue
-
-    print("newNotes: ")
-    print(newNotes)
     for note in newNotes:
         assert(int(note['duration']) % 8 == 0 or note['duration'] == '4')
         assert note['duration'] != '0', "found 0 duration"
