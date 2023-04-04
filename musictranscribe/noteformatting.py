@@ -91,7 +91,7 @@ def getNumStaves(notelist, time_signature='4/4'):
     print(f"numStaves: {numStaves}\nnumStaves rounded to multiple of 3: {3 * round(numStaves / 3)}")
     return 3 * round(numStaves / 3)
 
-
+#gives each note a stave index to determine which stave it goes in
 def assignStaves(notelist, numStaves):
     stavei = 0
     totalDuration = 0
@@ -103,12 +103,13 @@ def assignStaves(notelist, numStaves):
             totalDuration = 0
             stavei += 1
 
+#changes duration to vexform
 def convertToVexflow(notelist):
     vexdict = {
-        '4': '8',
-        '8': '4',
-        '16': '2',
-        '32': '1',
+        '4': '8', #eigth note 
+        '8': '4', #quarter note
+        '16': '2', #half note
+        '32': '1', #whole note (one full measure)
     }
 
     for note in notelist:
