@@ -28,6 +28,16 @@
         </div>
     {% endif %}
     <script src="https://unpkg.com/vexflow@4.1.0/build/cjs/vexflow-debug.js"></script>
+    <script>
+        function savePDF() {
+            const { jsPDF } = window.jspdf;
+            // Default export is a4 paper, portrait, using millimeters for units
+            const doc = new jsPDF();
+
+            doc.text("Hello world!", 10, 10);
+            doc.save("a4.pdf");
+        }
+    </script>
     <div class = "container-fluid py-4">
         <form enctype="multipart/form-data" method="post">
             {% csrf_token %}
@@ -37,6 +47,7 @@
                 </div>
             </table>
             <input class="btn btn-primary" type="submit" value="Submit">
+            <input class="btn btn-primary" type="submit" value="Save PDF" onclick="savePDF()">
         </form>
     </div>
 
@@ -76,13 +87,6 @@
             import { getNoteList, Note } from "{% static 'js/transcribe.js' %}"
             import { getStaves, getStaveNotes, convertToVex } from "{% static 'js/helpers.js' %}"
             
-            
-            const { jsPDF } = window.jspdf;
-            // Default export is a4 paper, portrait, using millimeters for units
-            const doc = new jsPDF();
-
-            doc.text("Hello world!", 10, 10);
-            doc.save("a4.pdf");
             // Start of Transcription code
             const { Renderer, Stave, Formatter, StaveNote, Beam, TickContext } = Vex.Flow;
             Renderer.DEBUG = true;

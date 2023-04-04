@@ -1,8 +1,6 @@
 from django.test import TestCase
 from musictranscribe.noteformatting import *
 
-# Create your tests here.
-
 class FormattingTestCase(TestCase):
     def setUp(self):
         self.fourQuarterNotes = [generateNote('C', 8*8)] * 4
@@ -11,19 +9,35 @@ class FormattingTestCase(TestCase):
 
         self.sixBeatNote = [generateNote('C', 6*8*8), generateNote('C', 2*8*8)]
 
+        self.twoQuarterOneHalf = [generateNote('C', 4), generateNote('F',4), 
+                                  generateNote('D', 2)]
+
     def testSplitNotes(self):
         print("Testing splitNotes...")
-        halfNotes = splitNotes(self.fourHalfNotes)
+
+        # Test fourHalfNotes
+        halfNotes = splitNotes(self.fourHalfNotes, "4/4")
         assert len(halfNotes) == 4, "Measure is wrong length"
         for note in halfNotes:
-            assert note['duration'] == '2', "Duration is wrong"
+            assert note['duration'] == '2', f"Expected duration 2, got duration {note['duration']}"
 
-        sixbeats = splitNotes(self.sixBeatNote)
-        for note in sixbeats:
-            print(note)
+        # Test fourHalfNotes
+        sixbeats = splitNotes(self.sixBeatNote, "4/4")
+        for note in sixbeats: print(note)
         assert len(sixbeats) == 3, print(sixbeats)
-
         for i in range(len(sixbeats)):
-            assert(sixbeats[i]['duration'] in ['4', '2']), "Wrong note duration"
+            assert(sixbeats[i]['duration'] in ['4', '2']), f"Expected duration 4 or 2, got duration {sixbeats[i]['duration']}"
+
+        # Test fourQuarterNotes
+        quarterNotes = splitNotes(self.fourQuarterNotes, "4/4")
+        assert len(quarterNotes) == 4, print(quarterNotes)
+        for note in quarterNotes: 
+            assert note['duration'] == '4', f"Expected duration 4, got {note['duration']}"
+
+        # Test twoQuarterOneHalf
+        twoQuarterOneHalfNotes = splitNotes(self.twoQuarteroneHalf, "4/4")
+        assert len(twoQuarterOneHalfNotes) == 4, print(twoQuarterOneHalfNotes)
+        for note in twoQuarterOneHalfNotes:
+            assert note['duration'] == '4', f"Expected duration 4, got {note['duration']}"
 
         print("Passed!")
