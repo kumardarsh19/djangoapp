@@ -21,20 +21,20 @@ class FormattingTestCase(TestCase):
         print("Testing splitNotes...")
 
         # Test fourQuarterNotes
-        halfNotes = splitNotes(self.fourHalfNotes)
+        halfNotes = splitNotes(self.fourHalfNotes, "4/4")
         assert len(halfNotes) == 4, "Measure is wrong length"
         for note in halfNotes:
             assert note['duration'] == '2', f"Expected duration 2, got duration {note['duration']}"
 
         # Test fourHalfNotes
-        sixbeats = splitNotes(self.sixBeatNote)
+        sixbeats = splitNotes(self.sixBeatNote, "4/4")
         for note in sixbeats: print(note)
         assert len(sixbeats) == 3, print(sixbeats)
         for i in range(len(sixbeats)):
             assert(sixbeats[i]['duration'] in ['4', '2']), f"Expected duration 4 or 2, got duration {sixbeats[i]['duration']}"
 
         # Test fourQuarterNotes
-        quarterNotes = splitNotes(self.fourQuarterNotes)
+        quarterNotes = splitNotes(self.fourQuarterNotes, "4/4")
         assert len(quarterNotes) == 4, print(quarterNotes)
         for note in quarterNotes: 
             assert note['duration'] == '4', f"Expected duration 4, got {note['duration']}"
