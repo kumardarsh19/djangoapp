@@ -1,3 +1,6 @@
+import math
+
+
 def generateNote(key, duration):
     note = {}
     note['key'] = key + '/4'
@@ -27,25 +30,32 @@ def splitNotes(notelist, time_signature="4/4"):
     newNotes = []
     for note in notelist:
         key, duration = note['key'], int(note['duration'])
+        
+        #if note is larger than a whole note, split it into as many whole notes as possible
+        #then run the normal code on the remaining beats
         if (duration > 32):
             numWhole = duration // 32
             for i in range(numWhole): newNotes.append(generateNote(key, 32))
             duration = duration % 32
 
-        
+        if (duration == 0): continue
+        #if duration was originally 56, now it should be 56-32 = 24
+        assert(0 < duration <= 32)
         assert(duration % 4 == 0)
-        assert(duration > 0)
         
-        if (duration % 8 != 0 and duration != 4):
-            dur0 = duration - 4
-            assert (dur0 % 8) == 0
-            dur1 = 4
-            
-            for d in [dur0, dur1]: newNotes.append(generateNote(key, d))
-        else:
-            
-            assert duration != 12, "adding 12 without split"
+
+        #check for 12, 24
+        if (duration % 3 == 0):
+            newNotes.append(generateNote(key, int(duration * 2 / 3)))
+            newNotes.append(generateNote(key, int(duration / 3)))
+
+        elif (duration % 8 == 0 or duration == 4): #4, 8, 16, 32
             newNotes.append(note)
+
+        else:
+            print('found else case!')
+            print(note)
+            continue
 
     print("newNotes: ")
     print(newNotes)
