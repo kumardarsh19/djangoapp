@@ -142,7 +142,11 @@
             var numStaves = {{number_staves}};
                         
             var staveList = getStaves(startx, starty, staveWidth, staveHeight, contextWidth, contextHeight, Vex);
+            staveList[0].addClef(clef);
+            staveList[0].addTimeSignature(timeSignature)
 
+
+            
             staveList.forEach(stave => {
                 stave.setContext(context).draw();
             });
