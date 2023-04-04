@@ -61,15 +61,7 @@ def home_view(request):
             # Calculate number of staves needed with total duration of notes.
             context['number_staves'] = getNumStaves(integratedList, timeSignature)
 
-            # Split notes that are too long due to Vexflow limitations.
-            splitList = splitNotes(integratedList, timeSignature)
-            print("After splitting long notes: ", json.dumps(splitList, indent=1))
-
-            for note in splitList:
-                duration = note['duration']
-                note['duration'] = formatDuration(duration, timeSignature)
-            for n in splitList:
-                assert(n['duration'] in ['1', '2', '4', '8'])
+            
             context['formatted'] = json.dumps(splitList, indent=1)
             context['numBars'] = getNumBars(notesPitches, timeSignature)
             context['pitches'] = notesPitches
