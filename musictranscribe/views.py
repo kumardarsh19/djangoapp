@@ -61,8 +61,11 @@ def home_view(request):
             # Calculate number of staves needed with total duration of notes.
             context['number_staves'] = getNumStaves(integratedList, timeSignature)
 
+            formattedList = completeFormatting(integratedList)
             
-            context['formatted'] = json.dumps(splitList, indent=1)
+            context['formatted'] = json.dumps(formattedList, indent=1)
+            print("Formatted list, ")
+            print(context['formatted'])
             context['numBars'] = getNumBars(notesPitches, timeSignature)
             context['pitches'] = notesPitches
             context['onsets'] = notesOnsets
