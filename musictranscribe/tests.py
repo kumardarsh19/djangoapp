@@ -17,10 +17,13 @@ class FormattingTestCase(TestCase):
 
         self.sixBeatNote = [generateNote('C', 6), generateNote('C', 2)]
 
+        self.twoQuarterOneHalf = [generateNote('C', 4), generateNote('F',4), 
+                                  generateNote('D', 2)]
+
     def testSplitNotes(self):
         print("Testing splitNotes...")
 
-        # Test fourQuarterNotes
+        # Test fourHalfNotes
         halfNotes = splitNotes(self.fourHalfNotes, "4/4")
         assert len(halfNotes) == 4, "Measure is wrong length"
         for note in halfNotes:
@@ -37,6 +40,12 @@ class FormattingTestCase(TestCase):
         quarterNotes = splitNotes(self.fourQuarterNotes, "4/4")
         assert len(quarterNotes) == 4, print(quarterNotes)
         for note in quarterNotes: 
+            assert note['duration'] == '4', f"Expected duration 4, got {note['duration']}"
+
+        # Test twoQuarterOneHalf
+        twoQuarterOneHalfNotes = splitNotes(self.twoQuarteroneHalf, "4/4")
+        assert len(twoQuarterOneHalfNotes) == 4, print(twoQuarterOneHalfNotes)
+        for note in twoQuarterOneHalfNotes:
             assert note['duration'] == '4', f"Expected duration 4, got {note['duration']}"
 
         print("Passed!")
