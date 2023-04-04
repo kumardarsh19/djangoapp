@@ -43,18 +43,28 @@ def splitNotes(notelist, time_signature="4/4"):
         assert(0 < duration <= 32)
         assert(duration % 4 == 0)
         
-
+        
         #check for 12, 24
         if (duration % 3 == 0):
             newNotes.append(generateNote(key, int(duration * 2 / 3)))
             newNotes.append(generateNote(key, int(duration / 3)))
 
+
         elif (duration % 8 == 0 or duration == 4): #4, 8, 16, 32
             newNotes.append(note)
 
+        elif (duration == 28):
+            for dur in [16, 8, 4]:
+                newNotes.append(generateNote(key, dur))
+
+        elif (duration == 20):
+            for dur in [16, 4]:
+                newNotes.append(generateNote(key, dur))
+            
         else:
             print('found else case!')
             print(note)
+            assert(0)
             continue
 
     print("newNotes: ")
