@@ -1,5 +1,9 @@
+import math
+
+
 def generateNote(key, duration):
     note = {}
+    if '/4' in key: key = key[0]
     note['key'] = key + '/4'
     note['duration'] = str(duration)
     if (key == 'R'): note['typ'] = 'r'
@@ -61,6 +65,7 @@ def splitNotes(notelist, time_signature="4/4"):
 
     for note in newNotes:
         assert(int(note['duration']) % 8 == 0 or note['duration'] == '4')
+        assert note['duration'] != '0', "found 0 duration"
     return newNotes
 
 #rounds number of units to nearest multiple of 4
@@ -69,11 +74,14 @@ def formatDuration(notelist, time_signature='4/4'):
     for note in notelist:
         duration = int(note['duration'])
         assert(duration > 0)
-        if (duration < 4): newDuration = 4
-        remainder = duration % 4
-        if (remainder < 2): newDuration = duration - remainder #rounding down
-        else: newDuration = duration + (4 - remainder) #rounding up
+        if (duration <= 4): newDuration = 4
+        elif (duration % 4 == 0): newDuration = duration
+        else:
+            remainder = duration % 4
+            if (remainder in [1, 2]): newDuration = duration - remainder #rounding down
+            else: newDuration = duration + (4 - remainder) #rounding up
 
+        assert(newDuration > 0)
         note['duration'] = str(newDuration)
 
 def getNumStaves(notelist, time_signature='4/4'):
@@ -129,10 +137,13 @@ def completeFormatting(notelist):
     formatDuration(notelist)
     for note in notelist:
         assert int(note['duration']) % 4 == 0, "formatDuration fails"
+        
     #2. split notes that aren't multiples of 8
     notelist = splitNotes(notelist)
     for note in notelist:
         assert int(note['duration']) % 8 == 0 or int(note['duration']) == 4, "splitNotes fails"
+        assert note['duration'] != '0', "found note with duration 0"
+        assert (int(note['duration']) <= 32), "notes too long"
     #3. assign a stave index to each note
     numStaves = getNumStaves(notelist)
     assignStaves(notelist, numStaves)
