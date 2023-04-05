@@ -154,20 +154,20 @@
                 // TODO: Can send notes in a list where index = 0 contains notes
                 // that are only part of first stave, inded = 1 notes for second
                 // stave, etc. Or a dict with keys as note index. 
-                // -> Faster performance/ 
-                formatted.forEach(note => {
-                    console.log(note.stave);
-                    if (note.stave == i) {
+                // -> Faster performance.
+                for (const [staveIndex, staveNotes] of Object.entries(formatted)) {
+                    console.log("----------------------------\nstaveNotes: " + staveNotes);
+                    staveNotes.forEach(note => {
+                        console.log("note: " + note)
                         let staveNote = new StaveNote({
                             keys: [note.key],
                             duration: note.duration,
                             type: note.typ,
                         })
-                        measure.push(staveNote)
-                        staveNotes.push(staveNote);
-                    }
-                });
-                
+                        measure.push(note)
+                        staveNotes.push(note);
+                    })
+                }
                 console.log(measure)
                 if (measure.length > 0) Formatter.FormatAndDraw(context, staveList[i], measure);
             }
