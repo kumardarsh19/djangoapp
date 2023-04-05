@@ -6,6 +6,10 @@ def generateNote(key, duration):
     else: note['typ'] = 'n'
     return note
 
+def tieNotes(note1, note2):
+    note1['next'] = note2
+    
+
 def integrate(pitches, onsets):
     notes = []
     duration = 1
@@ -27,19 +31,34 @@ def splitNotes(notelist, time_signature="4/4"):
     newNotes = []
     for note in notelist:
         key, duration = note['key'], int(note['duration'])
-        if (duration % 8 != 0 and duration != 4):
-            dur0 = duration - 4
-            assert (dur0 % 8) == 0
-            dur1 = 4
-            
-            for d in [dur0, dur1]: newNotes.append(generateNote(key, d))
-        else:
-            
-            assert duration != 12, "adding 12 without split"
-            newNotes.append(note)
+        notesadded = 0
+        while (duration >= 32):
+            newNotes.append(generateNote(key, 32))
+            duration -= 32
+            notesadded += 1
 
-    print("newNotes: ")
-    print(newNotes)
+        while (duration >= 16):
+            newNotes.append(generateNote(key, 16))
+            duration -= 16
+            notesadded += 1
+
+        while (duration >= 8):
+            newNotes.append(generateNote(key, 8))
+            duration -= 8
+            notesadded += 1
+
+        while (duration >= 4):
+            newNotes.append(generateNote(key, 4))
+            duration -= 4
+            notesadded += 1
+
+        #add ties
+        for i in range(len(newNotes) - notesadded, len(newNotes)-1):
+            tieNotes(newNotes[i], newNotes[i+1])
+
+
+
+
     for note in newNotes:
         assert(int(note['duration']) % 8 == 0 or note['duration'] == '4')
     return newNotes

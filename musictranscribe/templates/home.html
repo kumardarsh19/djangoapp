@@ -88,7 +88,7 @@
             import { getStaves, getStaveNotes, convertToVex } from "{% static 'js/helpers.js' %}"
             
             // Start of Transcription code
-            const { Renderer, Stave, Formatter, StaveNote, Beam, TickContext } = Vex.Flow;
+            const { Renderer, Stave, Formatter, StaveNote, Beam, TickContext, StaveTie } = Vex.Flow;
             Renderer.DEBUG = true;
             Stave.DEBUG = true;
             Formatter.DEBUG = true;
@@ -170,6 +170,7 @@
                             type: note.typ,
                         })
                         measure.push(staveNote)
+                        staveNotes.push(staveNote);
                     }
                 });
                 
@@ -177,7 +178,18 @@
                 if (measure.length > 0) Formatter.FormatAndDraw(context, staveList[i], measure);
             }
             
+            for (let i=0; i<formatted.length-1; i++) {
+                if (formatted[i].next) {
+                    let tie = new StaveTie({
+                        first_note: staveNotes[i],
+                        last_note: staveNotes[i+1],
+                        first_indices: [0],
+                        last_indices: [0],
+                    })
 
+                    tie.setContext(context).draw();
+                }
+            }
 
 
             
