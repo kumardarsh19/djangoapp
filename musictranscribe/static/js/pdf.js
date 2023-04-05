@@ -15,5 +15,3 @@ function writeNotes(notelist) {
 
     console.log("Saved score.pdf");
 }
-
-

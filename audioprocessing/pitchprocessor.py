@@ -8,8 +8,6 @@ from scipy.signal import *
 
 LOW_THRESHOLD = 0.15
 HIGH_THRESHOLD = 0.7
-
-
 A4 = 440
 LNOTES = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
 
@@ -23,8 +21,6 @@ def segmentSignal(signal, window_size, starti):
     segment[starti:starti+window_size] = signal[starti:starti+window_size]
     return segment
 
-
-
 def getPitchList(sample_rate, time_domain_sig, tempo=60, plot=0):
     notes = []
     
@@ -33,27 +29,21 @@ def getPitchList(sample_rate, time_domain_sig, tempo=60, plot=0):
         plt.show()
 
     #Normalize method from preprocessing.py
-    
-
     num_samples = len(time_domain_sig)
     clip_len = num_samples // sample_rate
     onesec = sample_rate
 
     #determines size of window as 1/8 of a beat
-    
     window_size = int((60 / tempo) * onesec // 8)
     df = sample_rate / num_samples
     time_ax = np.linspace(0, clip_len, num_samples)
     freq_ax = np.linspace(0, df * (num_samples - 1), num_samples)
-
-    overlap = 0
     
     #Apply window over signal (clip_length * 8 * tempo/60 times)
     print("Pitch processor: iterating over %d samples with interval %d" % (int(num_samples), int(window_size)))
 
     for i in range(0, num_samples, window_size):
         segment = segmentSignal(time_domain_sig, window_size, i)
-
         assert(segment.shape == time_domain_sig.shape)
 
         #pass over negligible segments
@@ -61,7 +51,6 @@ def getPitchList(sample_rate, time_domain_sig, tempo=60, plot=0):
         if np.amax(segment) < LOW_THRESHOLD:
             notes.append("R")
             continue
-
 
         #If you want to see the graph with segment 
         #highlighted every iteration
@@ -71,7 +60,6 @@ def getPitchList(sample_rate, time_domain_sig, tempo=60, plot=0):
             plt.show()
 
         freq_domain_sig = np.abs(fft(segment))
-
         max = np.amax(freq_domain_sig[0: 8000])
         maxi = np.where(freq_domain_sig[0:8000] == max)[0]
         maxout = maxi

@@ -1,6 +1,5 @@
 import math
 
-
 def generateNote(key, duration):
     note = {}
     if '/4' in key: key = key[0]
@@ -12,7 +11,6 @@ def generateNote(key, duration):
 
 def tieNotes(note1, note2):
     note1['next'] = note2
-    
 
 def integrate(pitches, onsets):
     notes = []
@@ -60,9 +58,6 @@ def splitNotes(notelist, time_signature="4/4"):
         for i in range(len(newNotes) - notesadded, len(newNotes)-1):
             tieNotes(newNotes[i], newNotes[i+1])
 
-
-
-
     for note in newNotes:
         assert(int(note['duration']) % 8 == 0 or note['duration'] == '4')
         assert note['duration'] != '0', "found 0 duration"
@@ -70,7 +65,6 @@ def splitNotes(notelist, time_signature="4/4"):
 
 #rounds number of units to nearest multiple of 4
 def formatDuration(notelist, time_signature='4/4'):
-    
     for note in notelist:
         duration = int(note['duration'])
         assert(duration > 0)
@@ -125,11 +119,9 @@ def convertToVexflow(notelist):
         '16': '2', #half note
         '32': '1', #whole note (one full measure)
     }
-
     for note in notelist:
         prevduration = note['duration']
         note['duration'] = vexdict[prevduration]
-
 
 #input integrator output
 def completeFormatting(notelist):
@@ -137,16 +129,18 @@ def completeFormatting(notelist):
     formatDuration(notelist)
     for note in notelist:
         assert int(note['duration']) % 4 == 0, "formatDuration fails"
-        
+
     #2. split notes that aren't multiples of 8
     notelist = splitNotes(notelist)
     for note in notelist:
         assert int(note['duration']) % 8 == 0 or int(note['duration']) == 4, "splitNotes fails"
         assert note['duration'] != '0', "found note with duration 0"
         assert (int(note['duration']) <= 32), "notes too long"
+
     #3. assign a stave index to each note
     numStaves = getNumStaves(notelist)
     assignStaves(notelist, numStaves)
+
     #4. format duration to Vexflow format
     convertToVexflow(notelist)
     return notelist
