@@ -57,8 +57,8 @@
     </div>
     
     <div id="notebox" >
-        {%if notes %}
-            {{notes}}
+        {%if formatted %}
+            {{formatted}}
         {% endif %}
     </div>
     
@@ -134,7 +134,7 @@
             var staveHeight = 90;
 
             var contextWidth = 3;
-            var contextHeight = 100;
+            var contextHeight = numberStaves / 3 + numberStaves;
 
             renderer.resize(staveWidth*contextWidth, staveHeight * contextHeight);
             var context = renderer.getContext();
@@ -144,7 +144,8 @@
             var staveList = getStaves(startx, starty, staveWidth, staveHeight, contextWidth, contextHeight, Vex);
             staveList[0].addClef(clef);
             staveList[0].addTimeSignature(timeSignature)
-
+            
+            staveList = staveList.slice(0, numberStaves)
             
             staveList.forEach(stave => {
                 stave.setContext(context).draw();
@@ -183,8 +184,8 @@
         </script>
     {% endif %}
 
-    <script> var path = "/static/vexflow/src/vex.ts"; </script>
 
+    
     <footer class="text-center text-white" style="background-color: #f1f1f1;">
         <div class="text-center text-dark p-3" style="background-color: rgba(0, 0, 0, 0.2);">
             © 2023 Copyright
