@@ -151,6 +151,10 @@
             console.log("NumStaves: ", numStaves);
             for (let i=0; i<numStaves; i++) {
                 let measure = [];
+                // TODO: Can send notes in a list where index = 0 contains notes
+                // that are only part of first stave, inded = 1 notes for second
+                // stave, etc. Or a dict with keys as note index. 
+                // -> Faster performance/ 
                 formatted.forEach(note => {
                     console.log(note.stave);
                     if (note.stave == i) {
@@ -167,7 +171,6 @@
                 console.log(measure)
                 if (measure.length > 0) Formatter.FormatAndDraw(context, staveList[i], measure);
             }
-            
             for (let i=0; i<formatted.length-1; i++) {
                 if (formatted[i].next) {
                     let tie = new StaveTie({
@@ -176,7 +179,6 @@
                         first_indices: [0],
                         last_indices: [0],
                     })
-
                     tie.setContext(context).draw();
                 }
             }
