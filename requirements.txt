@@ -5,3 +5,4 @@ numpy
 ipython
 matplotlib
 praat-parselmouth
+librosa
