@@ -138,10 +138,15 @@
             console.log(staveNotes);
             console.log(context);
 
+            const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            const svgElement = div.childNodes[0];
-            doc.svg(svgElement).then(() => doc.save("score.pdf"));
-            console.log("Saved score.pdf");
+            doc.html(div, {
+                callback: function (doc) {
+                    doc.save();
+                }
+            });
+            console.log("yay pdf")
+            doc.save("a4.pdf")
     
             
         </script>
