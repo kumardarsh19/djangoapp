@@ -107,54 +107,45 @@
             var onsets = {{onsets|safe}};
             var integrated = {{integrated|safe}};
             var formatted = {{formatted|safe}};
-
+            var numberStaves = {{number_staves}};
+            console.log("formatted: " + formatted)
+            console.log("staveList: " + staveList);
+            console.log("staveNotes: " + staveNotes);
+            console.log("context: " + context);
+            console.log("NumStaves: ", numberStaves);
             console.log("Integrated: " + integrated);
+            console.log("numStaves: " + numberStaves);
+
             integrated.forEach(note => {
                 console.log("key: " + note.key);
                 console.log("duration: " + note.duration);
             });
 
             // Set sizing of render.
-            var numberStaves = {{number_staves}};
-            console.log("numStaves: " + numberStaves);
-
             var startx = 50;
             var starty = 100;
-
             var staveWidth = 400;
             var staveHeight = 90;
-
             var contextWidth = 3;
             var contextHeight = numberStaves / 3 + numberStaves;
-
             renderer.resize(staveWidth*contextWidth, staveHeight * contextHeight);
             var context = renderer.getContext();
-                        
             var staveList = getStaves(startx, starty, staveWidth, staveHeight, contextWidth, contextHeight, Vex);
+
+            // Start drawing elements in stave.
             staveList[0].addClef(clef);
             staveList[0].addTimeSignature(timeSignature)
-            
             staveList = staveList.slice(0, numberStaves)
-            
             staveList.forEach(stave => {
                 stave.setContext(context).draw();
             });
 
+
+            // Draw notes belonging to a specific stave index in that stave.
             var staveNotes = []
-            console.log("formatted: " + formatted)
-            console.log("staveList: " + staveList);
-            console.log("staveNotes: " + staveNotes);
-            console.log("context: " + context);
-            console.log("NumStaves: ", numberStaves);
             for (let staveIndex=0; staveIndex<numberStaves; staveIndex++) {
                 let measure = [];
-                // TODO: Can send notes in a list where index = 0 contains notes
-                // that are only part of first stave, inded = 1 notes for second
-                // stave, etc. Or a dict with keys as note index. 
-                // -> Faster performance.
-                console.log()
                 let currentStave = formatted[staveIndex]
-                console.log("----------------------------\ncurrentStave_" + staveIndex + ": " + currentStave);
                 currentStave.forEach(note => {
                     console.log("note: " + note)
                     let staveNote = new StaveNote({
@@ -162,8 +153,8 @@
                         duration: note.duration,
                         type: note.typ,
                     })
-                    measure.push(note)
-                    staveNotes.push(note);
+                    measure.push(staveNote)
+                    staveNotes.push(staveNote);
                 })
                 console.log("measure: " + measure)
                 if (measure.length > 0) {
@@ -173,6 +164,7 @@
                     console.log("just kidding, error not here")
                 }
             }
+            // Check to see if we need to tie any notes.
             for (let i=0; i<formatted.length-1; i++) {
                 if (formatted[i].next) {
                     let tie = new StaveTie({
