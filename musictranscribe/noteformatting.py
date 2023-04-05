@@ -103,25 +103,31 @@ def getNumStaves(notelist, time_signature='4/4'):
 def assignStaves(notelist, numStaves):
     stavei = 0
     totalDuration = 0
+    staveNoteList = {0: []}
     for note in notelist:
         assert(stavei < numStaves)
         note['stave'] = stavei
+        staveNoteList[stavei].append(note)
         totalDuration += int(note['duration'])
         if (totalDuration >= 32):
             totalDuration = 0
             stavei += 1
+            staveNoteList[stavei] = []
+    return staveNoteList
 
 #changes duration to vexform
-def convertToVexflow(notelist):
+def convertToVexflow(staveNoteList):
     vexdict = {
         '4': '8', #eigth note 
         '8': '4', #quarter note
         '16': '2', #half note
         '32': '1', #whole note (one full measure)
     }
-    for note in notelist:
-        prevduration = note['duration']
-        note['duration'] = vexdict[prevduration]
+    for staveIndex, staveNotes in staveNoteList.items():
+        for i, note in enumerate(staveNotes):
+            prevduration = note['duration']
+            note['duration'] = vexdict[prevduration]
+            # staveNoteList[staveIndex][i] = note
 
 #input integrator output
 def completeFormatting(notelist):
@@ -139,8 +145,18 @@ def completeFormatting(notelist):
 
     #3. assign a stave index to each note
     numStaves = getNumStaves(notelist)
-    assignStaves(notelist, numStaves)
+    staveNoteList = assignStaves(notelist, numStaves)
 
     #4. format duration to Vexflow format
-    convertToVexflow(notelist)
-    return notelist
+    convertToVexflow(staveNoteList)
+
+    # Sort dictionary by keys indexes.
+    sortedIndexes = sorted(list(staveNoteList.keys()))
+    staveNoteList = {index: staveNoteList[index] for index in sortedIndexes}
+    print(f"----------staveNoteList---------\n")
+    for staveIndex, notes in staveNoteList.items():
+        print(f"\nstave {staveIndex}\n")
+        for noteIndex, note in enumerate(notes):
+            print(f"note_{staveIndex}_{noteIndex}: {note}")
+
+    return staveNoteList
