@@ -123,11 +123,10 @@ def convertToVexflow(staveNoteList):
         '16': '2', #half note
         '32': '1', #whole note (one full measure)
     }
-    for staveIndex, staveNotes in staveNoteList.items():
-        for i, note in enumerate(staveNotes):
+    for staveNotes in staveNoteList.values():
+        for note in staveNotes:
             prevduration = note['duration']
             note['duration'] = vexdict[prevduration]
-            # staveNoteList[staveIndex][i] = note
 
 #input integrator output
 def completeFormatting(notelist):
@@ -153,10 +152,4 @@ def completeFormatting(notelist):
     # Sort dictionary by keys indexes.
     sortedIndexes = sorted(list(staveNoteList.keys()))
     staveNoteList = {index: staveNoteList[index] for index in sortedIndexes}
-    print(f"----------staveNoteList---------\n")
-    for staveIndex, notes in staveNoteList.items():
-        print(f"\nstave {staveIndex}\n")
-        for noteIndex, note in enumerate(notes):
-            print(f"note_{staveIndex}_{noteIndex}: {note}")
-
     return staveNoteList
