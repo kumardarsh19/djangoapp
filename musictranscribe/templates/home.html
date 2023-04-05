@@ -129,8 +129,6 @@
 
             renderer.resize(staveWidth*contextWidth, staveHeight * contextHeight);
             var context = renderer.getContext();
-            
-            var numStaves = {{number_staves}};
                         
             var staveList = getStaves(startx, starty, staveWidth, staveHeight, contextWidth, contextHeight, Vex);
             staveList[0].addClef(clef);
@@ -144,32 +142,36 @@
 
             var staveNotes = []
             console.log("formatted: " + formatted)
-            
             console.log("staveList: " + staveList);
             console.log("staveNotes: " + staveNotes);
             console.log("context: " + context);
-            console.log("NumStaves: ", numStaves);
-            for (let i=0; i<numStaves; i++) {
+            console.log("NumStaves: ", numberStaves);
+            for (let staveIndex=0; staveIndex<numberStaves; staveIndex++) {
                 let measure = [];
                 // TODO: Can send notes in a list where index = 0 contains notes
                 // that are only part of first stave, inded = 1 notes for second
                 // stave, etc. Or a dict with keys as note index. 
                 // -> Faster performance.
-                for (const [staveIndex, staveNotes] of Object.entries(formatted)) {
-                    console.log("----------------------------\nstaveNotes: " + staveNotes);
-                    staveNotes.forEach(note => {
-                        console.log("note: " + note)
-                        let staveNote = new StaveNote({
-                            keys: [note.key],
-                            duration: note.duration,
-                            type: note.typ,
-                        })
-                        measure.push(note)
-                        staveNotes.push(note);
+                console.log()
+                let currentStave = formatted[staveIndex]
+                console.log("----------------------------\ncurrentStave_" + staveIndex + ": " + currentStave);
+                currentStave.forEach(note => {
+                    console.log("note: " + note)
+                    let staveNote = new StaveNote({
+                        keys: [note.key],
+                        duration: note.duration,
+                        type: note.typ,
                     })
+                    measure.push(note)
+                    staveNotes.push(note);
+                })
+                console.log("measure: " + measure)
+                if (measure.length > 0) {
+                    console.log("error here")
+                    console.log("context: " + context + "\nstaveList: " + staveList + "\nmeasure: " + measure)
+                    Formatter.FormatAndDraw(context, staveList[staveIndex], measure);
+                    console.log("just kidding, error not here")
                 }
-                console.log(measure)
-                if (measure.length > 0) Formatter.FormatAndDraw(context, staveList[i], measure);
             }
             for (let i=0; i<formatted.length-1; i++) {
                 if (formatted[i].next) {
