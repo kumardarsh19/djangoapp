@@ -44,13 +44,12 @@
         </form>
     </div>
 
-    <div id="test">
-        {% if integrated %} {{integrated|safe}} {% endif %}
-    </div>
+    
     
     <div id="notebox" >
         {%if formatted %}
-            {{formatted}}
+            {{formatted|safe}}
+            
         {% endif %}
     </div>
 
