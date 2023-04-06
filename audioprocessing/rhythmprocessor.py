@@ -4,7 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 from audioprocessing.preprocessing import normalize;
-import librosa
 
 found = 1
 not_found = 0
@@ -46,9 +45,6 @@ def detect_beats_channels(audio_data) -> np.array:
 
 def getOnsetList(sampling_rate, audio_data, tempo):
     # plot_time(audio_data, len(audio_data) // sampling_rate, len(audio_data))
-    estTempo, beats = librosa.beat.beat_track(y=audio_data, sr=sampling_rate)
-    if tempo == 0: tempo = estTempo
-    else: tempo = int(tempo)
     time_interval = int((60 / tempo) * sampling_rate // 8)
     samples = len(audio_data)
     

@@ -6,9 +6,11 @@ from audioprocessing.rhythmprocessor import getOnsetList
 from audioprocessing.preprocessing import normalize
 from audioprocessing.signaltonoise import signaltonoise
 from .forms import AudioForm
+
 import numpy as np
 import math
 import json
+import librosa
 
 from musictranscribe.noteformatting import *
 
@@ -46,9 +48,14 @@ def home_view(request):
             signal = signal[np.where(signal != 0)[0][0]:]
             print("New signal size: %d" % signal.size)
 
+            # Estimate tempo if user does not enter it.
+            estTempo, beats = librosa.beat.beat_track(y=signal, sr=fs)
+            if tempo == 0: tempo = estTempo
+            else: tempo = int(tempo)
+
             # Call rhythm and pitch processors.
             notesOnsets = getOnsetList(fs, signal, tempo)
-            notesPitches = getPitchList(fs, signal)
+            notesPitches = getPitchList(fs, signal, tempo)
             lenPitches = len(notesPitches)
             lenOnsets = len(notesOnsets)
             print(f"lenPitches: {lenPitches}; lenOnsets: {lenOnsets}")
