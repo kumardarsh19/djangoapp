@@ -14,7 +14,7 @@ class AudioForm(forms.Form):
     clef = forms.ChoiceField(label='Select a clef', choices=CLEF_CHOICES)
     time_signature = forms.ChoiceField(label='Select a time signature', 
         choices=TIME_SIGNATURE_CHOICES)
-    tempo = forms.CharField(max_length=3, min_length=2, empty_value="60")
+    tempo = forms.CharField(max_length=3, min_length=2, empty_value="00", required=False)
 
     def clean(self):
         cleaned_data = super().clean()
