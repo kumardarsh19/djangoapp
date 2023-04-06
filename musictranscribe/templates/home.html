@@ -79,7 +79,7 @@
             import { getStaves, getStaveNotes, convertToVex } from "{% static 'js/helpers.js' %}"
             
             // Start of Transcription code
-            const { Renderer, Stave, Formatter, StaveNote, Beam, TickContext, StaveTie } = Vex.Flow;
+            const { Renderer, Stave, Formatter, StaveNote, Beam, TickContext, StaveTie, Dot } = Vex.Flow;
             Renderer.DEBUG = true;
             Stave.DEBUG = true;
             Formatter.DEBUG = true;
@@ -148,11 +148,19 @@
                 let currentStave = formatted[staveIndex]
                 currentStave.forEach(note => {
                     console.log("note: " + note)
+                    
+                    if (note.invisible) return;
+
                     let staveNote = new StaveNote({
                         keys: [note.key],
                         duration: note.duration,
                         type: note.typ,
                     })
+
+                    if (note.dot) {
+                        staveNote.addModifier(new Dot());
+                    }
+                    
                     measure.push(staveNote)
                     staveNotes.push(staveNote);
                 })
