@@ -128,6 +128,16 @@ def convertToVexflow(staveNoteList):
             prevduration = note['duration']
             note['duration'] = vexdict[prevduration]
 
+def removeTies(staveNoteList):
+    for stave in staveNoteList.values():
+        for note in stave:
+            next = note.get('next', None)
+            if next != None:
+                if (int(note['duration']) == int(next['duration']) * 2):
+                    note['dot'] = 1
+                    note.pop('next')
+                    next['invisible'] = 1
+
 #input integrator output
 def completeFormatting(notelist):
     #1. round durations to nearest multiples of 4
@@ -146,10 +156,16 @@ def completeFormatting(notelist):
     numStaves = getNumStaves(notelist)
     staveNoteList = assignStaves(notelist, numStaves)
 
+    removeTies(staveNoteList)
+
     #4. format duration to Vexflow format
     convertToVexflow(staveNoteList)
 
     # Sort dictionary by keys indexes.
     sortedIndexes = sorted(list(staveNoteList.keys()))
     staveNoteList = {index: staveNoteList[index] for index in sortedIndexes}
+
+
+    
+
     return staveNoteList
