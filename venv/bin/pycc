@@ -1,0 +1,3 @@
+#!/Users/dacoyal/Documents/Carnegie Mellon University/4th year/Spring Semester/18-500/djangoapp/venv/bin/python3.10
+from numba.pycc import main
+main()

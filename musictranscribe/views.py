@@ -24,13 +24,14 @@ def home_view(request):
     context = {'form': AudioForm()}
     if request.method == 'POST':
         form = AudioForm(request.POST, request.FILES)
+        print("form not valid")
         if form.is_valid():
+            print("form is valid")
             # Get form data.
             file = form.cleaned_data['file']
             timeSignature = form.cleaned_data['time_signature']
             clef = form.cleaned_data['clef']
             tempo = int(form.cleaned_data['tempo'])
-            
             fs, signal = wavfile.read(file)
 
             # Check SNR >= 60 dB.
@@ -46,8 +47,8 @@ def home_view(request):
             print("New signal size: %d" % signal.size)
 
             # Call rhythm and pitch processors.
-            notesOnsets = getOnsetList(fs, signal)
-            notesPitches = getPitchList(fs, signal, tempo)
+            notesOnsets = getOnsetList(fs, signal, tempo)
+            notesPitches = getPitchList(fs, signal)
             lenPitches = len(notesPitches)
             lenOnsets = len(notesOnsets)
             print(f"lenPitches: {lenPitches}; lenOnsets: {lenOnsets}")
