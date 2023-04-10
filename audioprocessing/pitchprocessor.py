@@ -5,6 +5,7 @@ import numpy as np
 from IPython.display import clear_output
 from scipy.fftpack import fft, fftshift
 from scipy.signal import *
+from statistics import mean
 
 LOW_THRESHOLD = 0.15
 HIGH_THRESHOLD = 0.7
@@ -38,10 +39,11 @@ def getPitchList(sample_rate, time_domain_sig, tempo=60, plot=0):
     df = sample_rate / num_samples
     time_ax = np.linspace(0, clip_len, num_samples)
     freq_ax = np.linspace(0, df * (num_samples - 1), num_samples)
+    print(f"freq_ax: {freq_ax}")
+    print(f"\n\nfreq_ax.shape: {freq_ax.shape}\n\n")
     
     #Apply window over signal (clip_length * 8 * tempo/60 times)
     print("Pitch processor: iterating over %d samples with interval %d" % (int(num_samples), int(window_size)))
-
     for i in range(0, num_samples, window_size):
         segment = segmentSignal(time_domain_sig, window_size, i)
         assert(segment.shape == time_domain_sig.shape)
@@ -65,12 +67,18 @@ def getPitchList(sample_rate, time_domain_sig, tempo=60, plot=0):
         maxout = maxi
 
         #Ensures we don't take logarithm of 0
-        if (freq_ax[maxout] == 0):
-            notes.append("R")
-            continue
+        #TODO: dirty fix for the two values at a list index.
+        freq = freq_ax[maxout] if not type(freq_ax[maxout]).__module__ == np.__name__ else mean(freq_ax[maxout])
+        try:
+            if (freq == 0):
+                notes.append("R")
+                continue
+        except:
+            print(f"freq: {freq}; type: {type(freq_ax[maxout])}")
+            return
 
         #Apply standard formula to determine number of steps away from A
-        num_semitones = round(12 * math.log2(freq_ax[maxout] / A4))
+        num_semitones = round(12 * math.log2(freq / A4))
         note = LNOTES[num_semitones % 12]
         notes.append(note)
     print(f"\n--------Pitch Processor output--------\n{notes}")

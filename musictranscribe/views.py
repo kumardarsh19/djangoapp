@@ -52,6 +52,7 @@ def home_view(request):
             estTempo, beats = librosa.beat.beat_track(y=signal, sr=fs)
             if tempo == 0: tempo = estTempo
             else: tempo = int(tempo)
+            print(f"beats: {beats}")
 
             # Call rhythm and pitch processors.
             notesOnsets = getOnsetList(fs, signal, tempo)
