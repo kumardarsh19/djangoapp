@@ -167,13 +167,15 @@ def vexForm(notelist, time_sig, windowsize=8):
 
         numVexBeats = oneBeat / duration
 
+        assert(duration > 0 and numVexBeats > 0)
         while (math.log(numVexBeats, 2) % 1 != 0): #Add largest note possible, then deal with what's left
             nearestPower = 2 ** int(math.log(numVexBeats, 2))
             beatList.append(generateNote(key, oneBeat / nearestPower))
             duration -= nearestPower
             numVexBeats = oneBeat / duration
+            if numVexBeats <= 0: break
 
-        beatList.append(generateNote(key, numVexBeats))
+        #beatList.append(generateNote(key, numVexBeats))
 
 
     return beatList
@@ -189,6 +191,8 @@ def completeFormatting(notelist, time_sig = '4/4'):
     #1. remove notes that are longer than one full measure in length
     notelist = removeLargeNotes(notelist, windowsize * beatsPerMeasure)
 
+    for note in notelist:
+        assert(int(note['duration']) > 0)
 
     #2. convert to vexflow
 
