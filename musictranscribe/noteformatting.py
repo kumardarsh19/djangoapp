@@ -1,10 +1,12 @@
 import math
+import numpy as np
+
 
 def generateNote(key, duration):
     note = {}
     if '/4' in key: key = key[0]
     note['key'] = key + '/4'
-    note['duration'] = str(duration)
+    note['duration'] = str(int(duration))
     if (key == 'R'): note['typ'] = 'r'
     else: note['typ'] = 'n'
     return note
@@ -100,7 +102,7 @@ def getNumStaves(notelist, time_signature='4/4'):
     return 3 * round(numStaves / 3)
 
 #gives each note a stave index to determine which stave it goes in
-def assignStaves(notelist, numStaves):
+def assignStaves(notelist, numStaves, beatsPerMeasure, oneBeat):
     stavei = 0
     totalDuration = 0
     staveNoteList = {0: []}
@@ -108,8 +110,8 @@ def assignStaves(notelist, numStaves):
         assert(stavei < numStaves)
         note['stave'] = stavei
         staveNoteList[stavei].append(note)
-        totalDuration += int(note['duration'])
-        if (totalDuration >= 32):
+        totalDuration += oneBeat / int(note['duration']) #convert from vex-form to number-of-beats
+        if (totalDuration >= beatsPerMeasure):
             totalDuration = 0
             stavei += 1
             staveNoteList[stavei] = []
@@ -138,28 +140,72 @@ def removeTies(staveNoteList):
                     note.pop('next')
                     next['invisible'] = 1
 
-#input integrator output
-def completeFormatting(notelist):
-    #1. round durations to nearest multiples of 4
-    formatDuration(notelist)
-    for note in notelist:
-        assert int(note['duration']) % 4 == 0, "formatDuration fails"
 
-    #2. split notes that aren't multiples of 8
-    notelist = splitNotes(notelist)
+def removeLargeNotes(notelist, maxSize):
+    ret = []
     for note in notelist:
-        assert int(note['duration']) % 8 == 0 or int(note['duration']) == 4, "splitNotes fails"
-        assert note['duration'] != '0', "found note with duration 0"
-        assert (int(note['duration']) <= 32), "notes too long"
+        duration = int(note['duration'])
+        while (duration > maxSize):
+            ret.append(generateNote(note['key'], maxSize))
+            duration -= maxSize
+        
+        ret.append(generateNote(note['key'], duration))
+
+
+    return ret
+
+def vexForm(notelist, time_sig, windowsize=8):
+    oneBeat = int(time_sig[-1])
+    
+    beatList = []
+    for note in notelist:
+        key = note['key']
+        rawDuration = int(note['duration'])
+        duration = rawDuration / windowsize #find duration in number-of-beats
+        duration = (round(duration * 2) / 2) #round to nearest half beat
+        duration = max(duration, 0.5)
+
+        numVexBeats = oneBeat / duration
+
+        while (math.log(numVexBeats, 2) % 1 != 0): #Add largest note possible, then deal with what's left
+            nearestPower = 2 ** int(math.log(numVexBeats, 2))
+            beatList.append(generateNote(key, oneBeat / nearestPower))
+            duration -= nearestPower
+            numVexBeats = oneBeat / duration
+
+        beatList.append(generateNote(key, numVexBeats))
+
+
+    return beatList
+
+#input integrator output
+def completeFormatting(notelist, time_sig = '4/4'):
+    assert(len(time_sig.split('/')) == 2)
+    beatsPerMeasure, oneBeat = time_sig.split('/')
+    beatsPerMeasure = int(beatsPerMeasure)
+    oneBeat = int(oneBeat)
+    windowsize = 8
+    
+    #1. remove notes that are longer than one full measure in length
+    notelist = removeLargeNotes(notelist, windowsize * beatsPerMeasure)
+
+
+    #2. convert to vexflow
+
+    notelist = vexForm(notelist, time_sig, windowsize)
+        
+    for note in notelist:
+        duration = int(note['duration'])
+        assert(math.log(duration, 2) % 1 == 0)
+
 
     #3. assign a stave index to each note
     numStaves = getNumStaves(notelist)
-    staveNoteList = assignStaves(notelist, numStaves)
+    staveNoteList = assignStaves(notelist, numStaves, beatsPerMeasure, oneBeat)
 
-    removeTies(staveNoteList)
+    
+    #removeTies(staveNoteList)
 
-    #4. format duration to Vexflow format
-    convertToVexflow(staveNoteList)
 
     # Sort dictionary by keys indexes.
     sortedIndexes = sorted(list(staveNoteList.keys()))
@@ -167,5 +213,6 @@ def completeFormatting(notelist):
 
 
     
-
+    for measure in staveNoteList.values():
+        assert(len(measure) > 0)
     return staveNoteList
