@@ -5,8 +5,9 @@ from audioprocessing.pitchprocessor import getPitchList
 from audioprocessing.rhythmprocessor import getOnsetList
 from audioprocessing.preprocessing import normalize
 from audioprocessing.signaltonoise import signaltonoise
-from .forms import AudioForm
+from audioprocessing.globalvars import *
 
+from .forms import AudioForm
 import numpy as np
 import math
 import json
@@ -20,7 +21,7 @@ def validSNR(signal):
         snr = abs(snr)
     else:
         snr = abs(snr[0])
-    return snr >= 60
+    return snr >= SNR_THRESHOLD
 
 def home_view(request):
     context = {'form': AudioForm()}

@@ -10,6 +10,23 @@ def generateNote(key, duration):
     else: note['typ'] = 'n'
     return note
 
+def getDurations(notelist):
+    if isinstance(notelist, dict):
+        return notelist['duration']
+    elif isinstance(notelist, list):
+        return [note['duration'] for note in notelist]
+    else:
+        assert(0), "getDurations fails"
+
+def getKeys(notelist):
+    if isinstance(notelist, dict):
+        return notelist['key']
+    elif isinstance(notelist, list):
+        return [note['key'] for note in notelist]
+    else:
+        assert(0), "getKeys fails"
+
+
 def tieNotes(note1, note2):
     note1['next'] = note2
 
@@ -30,54 +47,7 @@ def integrate(pitches, onsets):
         notes.append(generateNote('R', duration))
     return notes
 
-def splitNotes(notelist, time_signature="4/4"):
-    newNotes = []
-    for note in notelist:
-        key, duration = note['key'], int(note['duration'])
-        notesadded = 0
-        while (duration >= 32):
-            newNotes.append(generateNote(key, 32))
-            duration -= 32
-            notesadded += 1
-
-        while (duration >= 16):
-            newNotes.append(generateNote(key, 16))
-            duration -= 16
-            notesadded += 1
-
-        while (duration >= 8):
-            newNotes.append(generateNote(key, 8))
-            duration -= 8
-            notesadded += 1
-
-        while (duration >= 4):
-            newNotes.append(generateNote(key, 4))
-            duration -= 4
-            notesadded += 1
-
-        #add ties
-        for i in range(len(newNotes) - notesadded, len(newNotes)-1):
-            tieNotes(newNotes[i], newNotes[i+1])
-
-    for note in newNotes:
-        assert(int(note['duration']) % 8 == 0 or note['duration'] == '4')
-        assert note['duration'] != '0', "found 0 duration"
-    return newNotes
-
 #formatDuration rounds number of units to nearest multiple of 4
-def formatDuration(notelist, time_signature='4/4'):
-    for note in notelist:
-        duration = int(note['duration'])
-        assert(duration > 0)
-        if (duration <= 4): newDuration = 4
-        elif (duration % 4 == 0): newDuration = duration
-        else:
-            remainder = duration % 4
-            if (remainder in [1, 2]): newDuration = duration - remainder #rounding down
-            else: newDuration = duration + (4 - remainder) #rounding up
-
-        assert(newDuration > 0)
-        note['duration'] = str(newDuration)
 
 def getNumStaves(notelist, time_signature='4/4'):
     assert(len(notelist) > 0)
@@ -121,17 +91,6 @@ def assignStaves(notelist, numStaves, beatsPerMeasure, oneBeat):
     return staveNoteList
 
 #changes duration to vexform
-def convertToVexflow(staveNoteList):
-    vexdict = {
-        '4': '8', #eigth note 
-        '8': '4', #quarter note
-        '16': '2', #half note
-        '32': '1', #whole note (one full measure)
-    }
-    for staveNotes in staveNoteList.values():
-        for note in staveNotes:
-            prevduration = note['duration']
-            note['duration'] = vexdict[prevduration]
 
 def removeTies(staveNoteList):
     for stave in staveNoteList.values():

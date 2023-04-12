@@ -4,10 +4,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 from audioprocessing.preprocessing import normalize;
-
+from audioprocessing.globalvars import *
 found = 1
 not_found = 0
-onset_height = 1000
 
 def plot(left_bound, right_bound, y, peak_pos, height):
     x = np.linspace(left_bound, right_bound, len(y))
@@ -45,7 +44,7 @@ def detect_beats_channels(audio_data) -> np.array:
 
 def getOnsetList(sampling_rate, audio_data, tempo):
     # plot_time(audio_data, len(audio_data) // sampling_rate, len(audio_data))
-    time_interval = int((60 / tempo) * sampling_rate // 8)
+    time_interval = int((DEFAULT_TEMPO / tempo) * sampling_rate // WINDOW_SIZE)
     samples = len(audio_data)
     
     audio_length = samples // sampling_rate

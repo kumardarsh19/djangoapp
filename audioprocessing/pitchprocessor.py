@@ -6,23 +6,20 @@ from IPython.display import clear_output
 from scipy.fftpack import fft, fftshift
 from scipy.signal import *
 from statistics import mean
+from globalvars import *
 
-LOW_THRESHOLD = 0.15
-HIGH_THRESHOLD = 0.7
-A4 = 440
-LNOTES = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
 
 
 '''
-Apply rectangular window of size window_size to signal
+Apply rectangular window of size window_width to signal
 starting at index starti
 '''
-def segmentSignal(signal, window_size, starti):
+def segmentSignal(signal, window_width, starti):
     segment = np.zeros(signal.shape)
-    segment[starti:starti+window_size] = signal[starti:starti+window_size]
+    segment[starti:starti+window_width] = signal[starti:starti+window_width]
     return segment
 
-def getPitchList(sample_rate, time_domain_sig, tempo=60, plot=0):
+def getPitchList(sample_rate, time_domain_sig, tempo=DEFAULT_TEMPO, plot=0):
     notes = []
     
     if (plot):
@@ -35,7 +32,7 @@ def getPitchList(sample_rate, time_domain_sig, tempo=60, plot=0):
     onesec = sample_rate
 
     #determines size of window as 1/8 of a beat
-    window_size = int((60 / tempo) * onesec // 8)
+    window_width = int((DEFAULT_TEMPO / tempo) * onesec // window_width)
     df = sample_rate / num_samples
     time_ax = np.linspace(0, clip_len, num_samples)
     freq_ax = np.linspace(0, df * (num_samples - 1), num_samples)
@@ -43,9 +40,9 @@ def getPitchList(sample_rate, time_domain_sig, tempo=60, plot=0):
     print(f"\n\nfreq_ax.shape: {freq_ax.shape}\n\n")
     
     #Apply window over signal (clip_length * 8 * tempo/60 times)
-    print("Pitch processor: iterating over %d samples with interval %d" % (int(num_samples), int(window_size)))
-    for i in range(0, num_samples, window_size):
-        segment = segmentSignal(time_domain_sig, window_size, i)
+    print("Pitch processor: iterating over %d samples with interval %d" % (int(num_samples), int(window_width)))
+    for i in range(0, num_samples, window_width):
+        segment = segmentSignal(time_domain_sig, window_width, i)
         assert(segment.shape == time_domain_sig.shape)
 
         #pass over negligible segments
@@ -90,12 +87,12 @@ def getNoteGraph(fileName, plot=True):
     num_samples = len(time_domain_sig)
     clip_len = num_samples // sample_rate
     onesec = sample_rate
-    window_size = onesec // 4
+    window_width = onesec // 4
     df = sample_rate / num_samples
     time_ax = np.linspace(0, clip_len, num_samples)
     freq_ax = np.linspace(0, df * (num_samples - 1), num_samples)
 
-    segment = segmentSignal(time_domain_sig, window_size, int(sample_rate * 2.5))
+    segment = segmentSignal(time_domain_sig, window_width, int(sample_rate * 2.5))
 
     freq_domain_sig = fft(segment)
 
@@ -115,7 +112,7 @@ def getNoteGraph(fileName, plot=True):
         plt.xlim([0, clip_len])
 
         plt.subplot(4, 1, 2)
-        plt.plot(windows.gaussian(window_size, std=window_size//50))
+        plt.plot(windows.gaussian(window_width, std=window_width//50))
 
         plt.subplot(4, 1, 3)
         plt.plot(time_ax, segment)
