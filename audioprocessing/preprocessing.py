@@ -1,7 +1,7 @@
 from sklearn import preprocessing
 import numpy as np
+from audioprocessing.globalvars import *
 
-THRESHOLD = 0.15
 
 '''
 Reshape to 1-D array (if not already)
@@ -15,7 +15,7 @@ def normalize(signal):
     newsig = np.zeros(signal.shape)
     for i in range(len(signal)):
         newsig[i] = signal[i] / max
-        if np.abs(newsig[i]) < THRESHOLD: newsig[i] = 0
+        if np.abs(newsig[i]) < LOW_THRESHOLD: newsig[i] = 0
     newlen = len(newsig)
     assert(newlen == initlen)
     return newsig

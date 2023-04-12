@@ -10,6 +10,23 @@ def generateNote(key, duration):
     else: note['typ'] = 'n'
     return note
 
+def getDurations(notelist):
+    if isinstance(notelist, dict):
+        return notelist['duration']
+    elif isinstance(notelist, list):
+        return [note['duration'] for note in notelist]
+    else:
+        assert(0), "getDurations fails"
+
+def getKeys(notelist):
+    if isinstance(notelist, dict):
+        return notelist['key']
+    elif isinstance(notelist, list):
+        return [note['key'] for note in notelist]
+    else:
+        assert(0), "getKeys fails"
+
+
 def tieNotes(note1, note2):
     note1['next'] = note2
 
