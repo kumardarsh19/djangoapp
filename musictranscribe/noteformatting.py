@@ -10,7 +10,6 @@ def generateNote(key, duration):
     else: note['typ'] = 'n'
     return note
 
-
 #return duration(s) of input
 def getDurations(notelist):
     if isinstance(notelist, dict):
@@ -28,7 +27,6 @@ def getKeys(notelist):
         return [note['key'] for note in notelist]
     else:
         assert(0), "getKeys fails"
-
 
 def tieNotes(note1, note2):
     note1['next'] = note2
@@ -49,8 +47,6 @@ def integrate(pitches, onsets):
     else:
         notes.append(generateNote('R', duration))
     return notes
-
-#formatDuration rounds number of units to nearest multiple of 4
 
 def getNumStaves(notelist, time_signature='4/4'):
     assert(len(notelist) > 0)
@@ -82,7 +78,7 @@ def assignStaves(notelist, numStaves, beatsPerMeasure, oneBeat):
     stavei = 0
     totalDuration = 0
     staveNoteList = {0: []}
-    print(f"\n\noneBeat: {oneBeat}\nbeatsPerMeasure: {beatsPerMeasure}")
+    #print(f"\n\noneBeat: {oneBeat}\nbeatsPerMeasure: {beatsPerMeasure}")
     for i, note in enumerate(notelist):
         assert(stavei < numStaves)
         note['stave'] = stavei
@@ -95,8 +91,6 @@ def assignStaves(notelist, numStaves, beatsPerMeasure, oneBeat):
             staveNoteList[stavei] = [note]
         else: staveNoteList[stavei].append(note)
     return staveNoteList
-
-#changes duration to vexform
 
 def removeTies(staveNoteList):
     for stave in staveNoteList.values():
@@ -148,7 +142,6 @@ def vexForm(notelist, time_sig, windowsize=8):
 #notelist: each duration is in units of 1/8th beat
 #duration 4 -> 4* 1/8th beats long
 def completeFormatting(notelist, time_sig = '4/4'):
-    
     assert(len(time_sig.split('/')) == 2)
     beatsPerMeasure = int(time_sig[0])
     oneBeat = int(time_sig[-1])
@@ -162,9 +155,7 @@ def completeFormatting(notelist, time_sig = '4/4'):
         assert(int(note['duration']) > 0)
 
     #2. convert to vexflow
-
     originalsize = len(notelist)
-
     notelist = vexForm(notelist, time_sig)
     assert(len(notelist) >= originalsize)
     for note in notelist:
