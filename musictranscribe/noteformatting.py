@@ -10,14 +10,17 @@ def generateNote(key, duration):
     else: note['typ'] = 'n'
     return note
 
+
+#return duration(s) of input
 def getDurations(notelist):
     if isinstance(notelist, dict):
-        return notelist['duration']
+        return int(notelist['duration'])
     elif isinstance(notelist, list):
-        return [note['duration'] for note in notelist]
+        return [int(note['duration']) for note in notelist]
     else:
         assert(0), "getDurations fails"
 
+#return note name(s) of input
 def getKeys(notelist):
     if isinstance(notelist, dict):
         return notelist['key']

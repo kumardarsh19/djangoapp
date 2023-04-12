@@ -7,23 +7,30 @@ class FormattingTestCase(TestCase):
         #4/4 time
 
         bpm = 4
-        onebeat = 4
-        self.fourQuarterNotes = [generateNote('C', 8*8)] * 4
+        self.onebeat = 8
+        self.fourQuarterNotes = [generateNote('C', self.onebeat*1)] * 4
 
-        self.fourHalfNotes = [generateNote('C', 16*8)] * 4
+        self.fourHalfNotes = [generateNote('C', self.onebeat*2)] * 4
 
-        self.sixBeatNote = [generateNote('C', 6*8*8), generateNote('C', 2*8*8)]
+        self.oneLargeNote = [generateNote('C', self.onebeat*4*12)]
 
-        self.twoQuarterOneHalf = [generateNote('C', 4), generateNote('F',4), 
-                                  generateNote('D', 2)]
-        
-        self.oneLargeNote = [generateNote('C', 40)]
+        self.smallLarge = [
+            generateNote('C', self.onebeat*1),
+            generateNote('C', self.onebeat*5),
+        ]
         
     def testRemoveLargeNotes(self):
         print("Testing removeLargeNotes...")
         beatsPerMeasure = 4
+        
+        currTest = removeLargeNotes(self.oneLargeNote, self.onebeat*beatsPerMeasure)
+        assert(len(currTest) > 1)
+        assert(len(currTest) == 12)
 
-    
+        for notelist in [self.fourHalfNotes, self.fourQuarterNotes]:
+            currTest = removeLargeNotes(notelist, self.onebeat*beatsPerMeasure)
+            assert(getDurations(notelist) == getDurations(currTest))
+
 
         print("Passed!")
 
