@@ -75,8 +75,6 @@ def home_view(request):
             
             context['formatted'] = json.dumps(formattedList, indent=1)
             context['numBars'] = getNumBars(notesPitches, timeSignature)
-            context['pitches'] = notesPitches
-            context['onsets'] = notesOnsets
             context['clef'] = clef
             context['timeSignature'] = timeSignature
             print(f"time_signature: {timeSignature}")

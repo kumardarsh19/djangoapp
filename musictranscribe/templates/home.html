@@ -54,7 +54,7 @@
         {% endif %}
     </div>
 
-    {%if pitches|length > 0 %}
+    {%if formatted|length > 0 %}
         <div id="boo"></div>
         <div id="musicsheet"></div>
         <script type="module">
@@ -103,8 +103,6 @@
             }
             
             // Get the pitches, and onsets array.
-            var pitches = {{pitches|safe}};
-            var onsets = {{onsets|safe}};
             var integrated = {{integrated|safe}};
             var formatted = {{formatted|safe}};
             var numberStaves = {{number_staves}};
