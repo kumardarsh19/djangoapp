@@ -1,5 +1,6 @@
 import math
 import numpy as np
+from audioprocessing.globalvars import *
 
 def generateNote(key, duration):
     note = {}
@@ -29,6 +30,11 @@ def getKeys(notelist):
     else:
         assert(0), "getKeys fails"
 
+def splitNote(note, dur1, dur2):
+    note1 = generateNote(note['key'], dur1)
+    note2 = generateNote(note['key'], dur2)
+    tieNotes(note1, note2)
+    return [note1, note2]
 
 def tieNotes(note1, note2):
     note1['next'] = note2
@@ -50,7 +56,7 @@ def integrate(pitches, onsets):
         notes.append(generateNote('R', duration))
     return notes
 
-#formatDuration rounds number of units to nearest multiple of 4
+
 
 def getNumStaves(notelist, time_signature='4/4'):
     assert(len(notelist) > 0)
@@ -68,7 +74,7 @@ def getNumStaves(notelist, time_signature='4/4'):
     numStaves = 1
     for i in range(len(notelist)):
         duration = int(notelist[i]['duration'])
-        totalDuration += oneBeat / duration
+        totalDuration += duration
         if (totalDuration > beatsPerMeasure):
             numStaves += 1
             totalDuration = duration
@@ -86,13 +92,22 @@ def assignStaves(notelist, numStaves, beatsPerMeasure, oneBeat):
     for i, note in enumerate(notelist):
         assert(stavei < numStaves)
         note['stave'] = stavei
-        noteDuration = oneBeat / int(note['duration'])
+        noteDuration = getDurations(note)
         totalDuration += noteDuration #convert from vex-form to number-of-beats
         #print(f"\n------------------------\nNote_{i}\nnoteduration: {noteDuration}\ntotalDuration: {totalDuration}\n\n")
         if (totalDuration > beatsPerMeasure):
-            totalDuration = noteDuration
+            #split note into two smaller notes, tie together
+            overflow = totalDuration - beatsPerMeasure
+            note1, note2 = splitNote(note, noteDuration - overflow, overflow)
+            #add first note to current stave
+            staveNoteList[stavei].append(note1)
+            note1['stave'] = stavei
+            #add second note to next stave
             stavei += 1
-            staveNoteList[stavei] = [note]
+            staveNoteList[stavei] = [note2]
+            note2['stave'] = stavei
+            totalDuration = overflow
+        
         else: staveNoteList[stavei].append(note)
     return staveNoteList
 
@@ -118,6 +133,14 @@ def removeLargeNotes(notelist, maxSize):
         ret.append(generateNote(note['key'], duration))
     return ret
 
+def convertToBeat(note: dict, time_sig, windowsize = WINDOW_SIZE):
+    oneBeat = int(time_sig.split('/')[-1])
+    rawDuration = getDurations(note)
+    duration_beats = rawDuration / windowsize
+    duration_beats = round(duration_beats * 2) / 2
+    duration_beats = max(duration_beats, 0.5)
+    return duration_beats
+
 def vexForm(notelist, time_sig, windowsize=8):
     oneBeat = int(time_sig[-1])
 
@@ -125,9 +148,7 @@ def vexForm(notelist, time_sig, windowsize=8):
     for note in notelist:
         key = note['key']
         rawDuration = int(note['duration'])
-        duration = rawDuration / windowsize #find duration in number-of-beats
-        duration = (round(duration * 2) / 2) #round to nearest half beat
-        duration = max(duration, 0.5)
+        duration = convertToBeat(note, time_sig)
 
         numVexBeats = oneBeat / duration
 
@@ -135,6 +156,11 @@ def vexForm(notelist, time_sig, windowsize=8):
 
         if (math.log(numVexBeats, 2) % 1 == 0):
             beatList.append(generateNote(key, numVexBeats))
+        elif (math.log(numVexBeats * 2/3, 2) % 1 == 0 and math.log(numVexBeats / 3, 2) % 1 == 0):
+            note1 = generateNote(key, numVexBeats * 2 / 3)
+            note2 = generateNote(key, numVexBeats / 3)
+            tieNotes(note1, note2)
+            beatList.extend([note1, note2])
         else:
             while (math.log(numVexBeats, 2) % 1 != 0): #Add largest note possible, then deal with what's left
                 nearestPower = 2 ** int(math.log(numVexBeats, 2))
@@ -161,6 +187,21 @@ def completeFormatting(notelist, time_sig = '4/4'):
     for note in notelist:   
         assert(int(note['duration']) > 0)
 
+    for note in notelist:
+        note['duration'] = str(convertToBeat(note, time_sig))
+
+    durationList = getDurations(notelist)
+    keyList = getKeys(notelist)
+
+    numStaves = math.ceil(sum(durationList) / beatsPerMeasure)
+    while (numStaves % 3 != 0): numStaves += 1
+
+    #3. assign a stave index to each note
+    
+    staveNoteList = assignStaves(notelist, numStaves, beatsPerMeasure, oneBeat)
+
+
+
     #2. convert to vexflow
 
     originalsize = len(notelist)
@@ -171,9 +212,6 @@ def completeFormatting(notelist, time_sig = '4/4'):
         duration = int(note['duration'])
         assert(math.log(duration, 2) % 1 == 0)
 
-    #3. assign a stave index to each note
-    numStaves = getNumStaves(notelist, time_sig)
-    staveNoteList = assignStaves(notelist, numStaves, beatsPerMeasure, oneBeat)
 
     #removeTies(staveNoteList)
 
