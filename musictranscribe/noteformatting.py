@@ -63,7 +63,7 @@ def splitNotes(notelist, time_signature="4/4"):
         assert note['duration'] != '0', "found 0 duration"
     return newNotes
 
-#rounds number of units to nearest multiple of 4
+#formatDuration rounds number of units to nearest multiple of 4
 def formatDuration(notelist, time_signature='4/4'):
     for note in notelist:
         duration = int(note['duration'])
@@ -109,7 +109,7 @@ def assignStaves(notelist, numStaves):
         note['stave'] = stavei
         staveNoteList[stavei].append(note)
         totalDuration += int(note['duration'])
-        if (totalDuration >= 32):
+        if (totalDuration >= 32): #TODO: why is this number 32? Might be issue with putting incorrect amont of notes per stave.
             totalDuration = 0
             stavei += 1
             staveNoteList[stavei] = []
@@ -164,8 +164,4 @@ def completeFormatting(notelist):
     # Sort dictionary by keys indexes.
     sortedIndexes = sorted(list(staveNoteList.keys()))
     staveNoteList = {index: staveNoteList[index] for index in sortedIndexes}
-
-
-    
-
     return staveNoteList

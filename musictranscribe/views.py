@@ -65,16 +65,15 @@ def home_view(request):
             # Integrate the rhythm and pitch processor outputs.
             integratedList = integrate(notesPitches, notesOnsets)
             context['integrated'] = json.dumps(integratedList, indent=1)
-            print("Integrated list: ", context['integrated'])
 
             # Calculate number of staves needed with total duration of notes.
             context['number_staves'] = getNumStaves(integratedList, timeSignature)
 
+            # Get notes assigned to respective stave index.
             formattedList = completeFormatting(integratedList)
+            print(f"\nformattedList: {formattedList}\n")
             
             context['formatted'] = json.dumps(formattedList, indent=1)
-            print("Formatted list, ")
-            print(context['formatted'])
             context['numBars'] = getNumBars(notesPitches, timeSignature)
             context['pitches'] = notesPitches
             context['onsets'] = notesOnsets
