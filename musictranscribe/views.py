@@ -66,11 +66,11 @@ def home_view(request):
             integratedList = integrate(notesPitches, notesOnsets)
             context['integrated'] = json.dumps(integratedList, indent=1)
 
-            # Calculate number of staves needed with total duration of notes.
-            context['number_staves'] = getNumStaves(integratedList, timeSignature)
-
             # Get notes assigned to respective stave index.
             formattedList = completeFormatting(integratedList)
+
+            # Calculate number of staves needed with total duration of notes.
+            context['number_staves'] = len(formattedList)
             print(f"\nformattedList: {formattedList}\n")
             
             context['formatted'] = json.dumps(formattedList, indent=1)
