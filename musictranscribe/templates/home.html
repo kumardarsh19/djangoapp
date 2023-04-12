@@ -44,9 +44,7 @@
         </form>
     </div>
 
-    <div id="test">
-        {% if integrated %} {{integrated|safe}} {% endif %}
-    </div>
+    
     
     <div id="notebox" >
         {%if formatted %}
@@ -54,7 +52,7 @@
         {% endif %}
     </div>
 
-    {%if pitches|length > 0 %}
+    {%if formatted|length > 0 %}
         <div id="boo"></div>
         <div id="musicsheet"></div>
         <script type="module">
@@ -103,9 +101,8 @@
             }
             
             // Get the pitches, and onsets array.
-            var pitches = {{pitches|safe}};
-            var onsets = {{onsets|safe}};
-            var integrated = {{integrated|safe}};
+
+
             var formatted = {{formatted|safe}};
             var numberStaves = {{number_staves}};
             console.log("formatted: " + formatted)
@@ -113,13 +110,8 @@
             console.log("staveNotes: " + staveNotes);
             console.log("context: " + context);
             console.log("NumStaves: ", numberStaves);
-            console.log("Integrated: " + integrated);
-            console.log("numStaves: " + numberStaves);
 
-            integrated.forEach(note => {
-                console.log("key: " + note.key);
-                console.log("duration: " + note.duration);
-            });
+        
 
             // Set sizing of render.
             var startx = 50;
