@@ -79,15 +79,18 @@ def assignStaves(notelist, numStaves, beatsPerMeasure, oneBeat):
     stavei = 0
     totalDuration = 0
     staveNoteList = {0: []}
-    for note in notelist:
+    print(f"\n\noneBeat: {oneBeat}\nbeatsPerMeasure: {beatsPerMeasure}")
+    for i, note in enumerate(notelist):
         assert(stavei < numStaves)
         note['stave'] = stavei
-        staveNoteList[stavei].append(note)
-        totalDuration += oneBeat / int(note['duration']) #convert from vex-form to number-of-beats
-        if (totalDuration >= beatsPerMeasure):
-            totalDuration = 0
+        noteDuration = oneBeat / int(note['duration'])
+        totalDuration += noteDuration #convert from vex-form to number-of-beats
+        #print(f"\n------------------------\nNote_{i}\nnoteduration: {noteDuration}\ntotalDuration: {totalDuration}\n\n")
+        if (totalDuration > beatsPerMeasure):
+            totalDuration = noteDuration
             stavei += 1
-            staveNoteList[stavei] = []
+            staveNoteList[stavei] = [note]
+        else: staveNoteList[stavei].append(note)
     return staveNoteList
 
 #changes duration to vexform
@@ -129,8 +132,6 @@ def vexForm(notelist, time_sig, windowsize=8):
 
         if (math.log(numVexBeats, 2) % 1 == 0):
             beatList.append(generateNote(key, numVexBeats))
-
-
         else:
             while (math.log(numVexBeats, 2) % 1 != 0): #Add largest note possible, then deal with what's left
                 nearestPower = 2 ** int(math.log(numVexBeats, 2))
@@ -138,9 +139,6 @@ def vexForm(notelist, time_sig, windowsize=8):
                 duration -= nearestPower
                 numVexBeats = oneBeat / duration
                 if numVexBeats <= 0: break
-
-
-
     return beatList
 
 #input integrator output
@@ -151,9 +149,9 @@ def completeFormatting(notelist, time_sig = '4/4'):
     assert(len(time_sig.split('/')) == 2)
     beatsPerMeasure = int(time_sig[0])
     oneBeat = int(time_sig[-1])
-   
-    
+
     originalsize = len(notelist)
+
     #1. remove notes that are longer than one full measure in length
     notelist = removeLargeNotes(notelist, 8 * beatsPerMeasure)
     assert(len(notelist) >= originalsize)
@@ -164,7 +162,6 @@ def completeFormatting(notelist, time_sig = '4/4'):
 
     originalsize = len(notelist)
 
-    
     notelist = vexForm(notelist, time_sig)
     assert(len(notelist) >= originalsize)
     for note in notelist:
@@ -180,8 +177,4 @@ def completeFormatting(notelist, time_sig = '4/4'):
     # Sort dictionary by keys indexes.
     sortedIndexes = sorted(list(staveNoteList.keys()))
     staveNoteList = {index: staveNoteList[index] for index in sortedIndexes}
-
-
-    
-    
     return staveNoteList
