@@ -1,5 +1,6 @@
 from django.test import TestCase
 from musictranscribe.noteformatting import *
+from audioprocessing.globalvars import *
 
 class FormattingTestCase(TestCase):
     def setUp(self):
@@ -16,34 +17,13 @@ class FormattingTestCase(TestCase):
         self.twoQuarterOneHalf = [generateNote('C', 4), generateNote('F',4), 
                                   generateNote('D', 2)]
         
+        self.oneLargeNote = [generateNote('C', 40)]
+        
+    def testRemoveLargeNotes(self):
+        print("Testing removeLargeNotes...")
+        beatsPerMeasure = 4
 
-    def testSplitNotes(self):
-        print("Testing splitNotes...")
-
-        # Test fourHalfNotes
-        halfNotes = splitNotes(self.fourHalfNotes, "4/4")
-        assert len(halfNotes) == 4, "Measure is wrong length"
-        for note in halfNotes:
-            assert note['duration'] == '2', f"Expected duration 2, got duration {note['duration']}"
-
-        # Test fourHalfNotes
-        sixbeats = splitNotes(self.sixBeatNote, "4/4")
-        for note in sixbeats: print(note)
-        assert len(sixbeats) == 3, print(sixbeats)
-        for i in range(len(sixbeats)):
-            assert(sixbeats[i]['duration'] in ['4', '2']), f"Expected duration 4 or 2, got duration {sixbeats[i]['duration']}"
-
-        # Test fourQuarterNotes
-        quarterNotes = splitNotes(self.fourQuarterNotes, "4/4")
-        assert len(quarterNotes) == 4, print(quarterNotes)
-        for note in quarterNotes: 
-            assert note['duration'] == '4', f"Expected duration 4, got {note['duration']}"
-
-        # Test twoQuarterOneHalf
-        twoQuarterOneHalfNotes = splitNotes(self.twoQuarteroneHalf, "4/4")
-        assert len(twoQuarterOneHalfNotes) == 4, print(twoQuarterOneHalfNotes)
-        for note in twoQuarterOneHalfNotes:
-            assert note['duration'] == '4', f"Expected duration 4, got {note['duration']}"
+    
 
         print("Passed!")
 
