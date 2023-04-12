@@ -6,7 +6,7 @@ from IPython.display import clear_output
 from scipy.fftpack import fft, fftshift
 from scipy.signal import *
 from statistics import mean
-from globalvars import *
+from audioprocessing.globalvars import *
 
 
 
