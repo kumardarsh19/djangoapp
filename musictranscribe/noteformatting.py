@@ -80,6 +80,7 @@ def assignStaves(notelist, numStaves, beatsPerMeasure, oneBeat):
     staveNoteList = {0: []}
     #print(f"\n\noneBeat: {oneBeat}\nbeatsPerMeasure: {beatsPerMeasure}")
     for i, note in enumerate(notelist):
+        print(f"\n\nstavei: {stavei}, numStaves: {numStaves}")
         assert(stavei < numStaves)
         note['stave'] = stavei
         noteDuration = oneBeat / int(note['duration'])

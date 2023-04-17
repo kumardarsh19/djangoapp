@@ -27,9 +27,7 @@ def home_view(request):
     context = {'form': AudioForm()}
     if request.method == 'POST':
         form = AudioForm(request.POST, request.FILES)
-        print("form not valid")
         if form.is_valid():
-            print("form is valid")
             # Get form data.
             file = form.cleaned_data['file']
             timeSignature = form.cleaned_data['time_signature']
