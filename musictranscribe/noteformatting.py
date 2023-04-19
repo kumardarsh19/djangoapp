@@ -1,21 +1,25 @@
 import math
 import numpy as np
+from audioprocessing.globalvars import *
 
 def generateNote(key, duration):
     note = {}
     if '/4' in key: key = key[0]
     note['key'] = key + '/4'
-    note['duration'] = str(int(duration))
+    note['duration'] = duration
     if (key == 'R'): note['typ'] = 'r'
     else: note['typ'] = 'n'
     return note
 
+
+
+
 #return duration(s) of input
 def getDurations(notelist):
     if isinstance(notelist, dict):
-        return int(notelist['duration'])
+        return (notelist['duration'])
     elif isinstance(notelist, list):
-        return [int(note['duration']) for note in notelist]
+        return [(note['duration']) for note in notelist]
     else:
         assert(0), "getDurations fails"
 
@@ -27,6 +31,14 @@ def getKeys(notelist):
         return [note['key'] for note in notelist]
     else:
         assert(0), "getKeys fails"
+
+def splitNote(note, dur1, dur2):
+    note1 = generateNote(note['key'], dur1)
+    
+    note2 = generateNote(note['key'], dur2)
+    
+    tieNotes(note1, note2)
+    return [note1, note2]
 
 def tieNotes(note1, note2):
     note1['next'] = note2
@@ -62,9 +74,9 @@ def getNumStaves(notelist, time_signature='4/4'):
     # Determine how many staves we need.
     totalDuration = 0
     numStaves = 1
-    for i in range(len(notelist)):
-        duration = int(notelist[i]['duration'])
-        totalDuration += oneBeat / duration
+    for i in range(len(durationList)):
+        duration = int(durationList[i]['duration'])
+        totalDuration += duration
         if (totalDuration > beatsPerMeasure):
             numStaves += 1
             totalDuration = duration
@@ -77,19 +89,52 @@ def getNumStaves(notelist, time_signature='4/4'):
 def assignStaves(notelist, numStaves, beatsPerMeasure, oneBeat):
     stavei = 0
     totalDuration = 0
-    staveNoteList = {0: []}
-    #print(f"\n\noneBeat: {oneBeat}\nbeatsPerMeasure: {beatsPerMeasure}")
+    staveNoteList = {key: [] for key in range(numStaves)}
+    print(f"\n\noneBeat: {oneBeat}\nbeatsPerMeasure: {beatsPerMeasure}")
     for i, note in enumerate(notelist):
         assert(stavei < numStaves)
         note['stave'] = stavei
-        noteDuration = oneBeat / int(note['duration'])
+        noteDuration = getDurations(note)
         totalDuration += noteDuration #convert from vex-form to number-of-beats
         #print(f"\n------------------------\nNote_{i}\nnoteduration: {noteDuration}\ntotalDuration: {totalDuration}\n\n")
-        if (totalDuration > beatsPerMeasure):
-            totalDuration = noteDuration
+        if (totalDuration < beatsPerMeasure):
+            staveNoteList[stavei].append(note)
+        elif (totalDuration == beatsPerMeasure):
+            staveNoteList[stavei].append(note)
+            totalDuration = 0
             stavei += 1
-            staveNoteList[stavei] = [note]
-        else: staveNoteList[stavei].append(note)
+        else:
+            assert(totalDuration > beatsPerMeasure)
+            #split note into two smaller notes, tie together
+            overflow = totalDuration - beatsPerMeasure
+            assert(overflow > 0)
+            note1, note2 = splitNote(note, noteDuration - overflow, overflow)
+            #add first note to current stave
+            assert(getDurations(note1) > 0)
+            assert(getDurations(note2) > 0)
+            if stavei not in staveNoteList.keys():
+                staveNoteList[stavei] = []
+
+            staveNoteList[stavei].append(note1)
+            note1['stave'] = stavei
+            #add second note to next stave
+            stavei += 1
+            staveNoteList[stavei] = [note2]
+            note2['stave'] = stavei
+            totalDuration = overflow
+
+    #fill in empty staves
+    for i in range(numStaves-1, 0, -1):
+        stave = staveNoteList[i]
+        totalBeats = sum(getDurations(stave))
+        while(totalBeats < beatsPerMeasure):
+            difference = beatsPerMeasure - totalBeats
+            for remainder in [4, 2, 1, .5]:
+                while (difference >= remainder):
+                    stave.append(generateNote('R', remainder))
+                    difference -= remainder
+            totalBeats = sum(getDurations(stave))
+
     return staveNoteList
 
 def removeTies(staveNoteList):
@@ -105,38 +150,36 @@ def removeTies(staveNoteList):
 def removeLargeNotes(notelist, maxSize):
     ret = []
     for note in notelist:
-        duration = int(note['duration'])
+        duration = getDurations(note)
         while (duration > maxSize):
             ret.append(generateNote(note['key'], maxSize))
             duration -= maxSize
         ret.append(generateNote(note['key'], duration))
     return ret
 
+def convertToBeat(note: dict, time_sig, windowsize = WINDOW_SIZE):
+    oneBeat = int(time_sig.split('/')[-1])
+    rawDuration = getDurations(note)
+    duration_beats = rawDuration / windowsize
+    duration_beats = round(duration_beats * 2) / 2
+    duration_beats = max(duration_beats, 0.5)
+    assert(duration_beats > 0)
+    return duration_beats
+
 def vexForm(notelist, time_sig, windowsize=8):
     oneBeat = int(time_sig[-1])
-
-    beatList = []
-    for note in notelist:
-        key = note['key']
-        rawDuration = int(note['duration'])
-        duration = rawDuration / windowsize #find duration in number-of-beats
-        duration = (round(duration * 2) / 2) #round to nearest half beat
-        duration = max(duration, 0.5)
-
-        numVexBeats = oneBeat / duration
-
-        assert(duration > 0 and numVexBeats > 0)
-
-        if (math.log(numVexBeats, 2) % 1 == 0):
-            beatList.append(generateNote(key, numVexBeats))
+    beatlist = []
+    for i, note in enumerate(notelist):
+        beatDuration = getDurations(note)
+        opposite = oneBeat / beatDuration
+        if math.log(opposite, 2) % 1 == 0:
+            beatlist.append(generateNote(note['key'], int(opposite)))
         else:
-            while (math.log(numVexBeats, 2) % 1 != 0): #Add largest note possible, then deal with what's left
-                nearestPower = 2 ** int(math.log(numVexBeats, 2))
-                beatList.append(generateNote(key, oneBeat / nearestPower))
-                duration -= nearestPower
-                numVexBeats = oneBeat / duration
-                if numVexBeats <= 0: break
-    return beatList
+            beatlist.append(generateNote(note['key'], int(oneBeat / ( 2/3 * beatDuration))))
+            beatlist.append(generateNote(note['key'], int(oneBeat / (1 / 3 * beatDuration))))
+
+    return beatlist
+                
 
 #input integrator output
 #notelist: each duration is in units of 1/8th beat
@@ -152,18 +195,21 @@ def completeFormatting(notelist, time_sig = '4/4'):
     notelist = removeLargeNotes(notelist, 8 * beatsPerMeasure)
     assert(len(notelist) >= originalsize)
     for note in notelist:   
-        assert(int(note['duration']) > 0)
+        assert(getDurations(note) > 0)
 
-    #2. convert to vexflow
-    originalsize = len(notelist)
-    notelist = vexForm(notelist, time_sig)
-    assert(len(notelist) >= originalsize)
     for note in notelist:
-        duration = int(note['duration'])
-        assert(math.log(duration, 2) % 1 == 0)
+        note['duration'] = convertToBeat(note, time_sig)
+
+    durationList = getDurations(notelist)
+    keyList = getKeys(notelist)
+
+    assert(0 not in durationList)
+
+    numStaves = math.ceil(sum(durationList) / beatsPerMeasure)
+    while (numStaves % 3 != 0): numStaves += 1
 
     #3. assign a stave index to each note
-    numStaves = getNumStaves(notelist, time_sig)
+    
     staveNoteList = assignStaves(notelist, numStaves, beatsPerMeasure, oneBeat)
 
     #removeTies(staveNoteList)
@@ -171,4 +217,14 @@ def completeFormatting(notelist, time_sig = '4/4'):
     # Sort dictionary by keys indexes.
     sortedIndexes = sorted(list(staveNoteList.keys()))
     staveNoteList = {index: staveNoteList[index] for index in sortedIndexes}
-    return staveNoteList
+
+    for key in staveNoteList:
+        stave = staveNoteList[key]
+        durations = getDurations(stave)
+        assert(0 not in durations)
+        assert(sum(durations) == beatsPerMeasure)
+        staveNoteList[key] = vexForm(stave, time_sig)
+
+
+    
+    return staveNoteList, keyList, durationList

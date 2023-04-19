@@ -18,12 +18,18 @@ class FormattingTestCase(TestCase):
     def testRemoveLargeNotes(self):
         print("Testing removeLargeNotes...")
         beatsPerMeasure = 4
-        currTest = removeLargeNotes(self.oneLargeNote, self.onebeat*beatsPerMeasure)
+        
+        maxsize = self.onebeat * beatsPerMeasure
+        currTest = removeLargeNotes(self.oneLargeNote, maxsize)
         assert(len(currTest) > 1)
         assert(len(currTest) == 12)
         for notelist in [self.fourHalfNotes, self.fourQuarterNotes]:
-            currTest = removeLargeNotes(notelist, self.onebeat*beatsPerMeasure)
+            currTest = removeLargeNotes(notelist, maxsize)
             assert(getDurations(notelist) == getDurations(currTest))
+
+        currTest = removeLargeNotes(self.smallLarge, maxsize)
+        assert(len(currTest) == 3)
+        assert(getDurations(currTest) == [self.onebeat, self.onebeat * 4, self.onebeat * 1])
         print("Passed!")
 
     def testVexNotes(self):

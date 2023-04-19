@@ -32,7 +32,7 @@ def getPitchList(sample_rate, time_domain_sig, tempo=DEFAULT_TEMPO, plot=0):
     onesec = sample_rate
 
     #determines size of window as 1/8 of a beat
-    window_width = int((DEFAULT_TEMPO / tempo) * onesec // window_width)
+    window_width = int((DEFAULT_TEMPO / tempo) * onesec // WINDOW_SIZE)
     df = sample_rate / num_samples
     time_ax = np.linspace(0, clip_len, num_samples)
     freq_ax = np.linspace(0, df * (num_samples - 1), num_samples)

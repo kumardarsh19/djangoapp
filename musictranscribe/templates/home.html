@@ -48,7 +48,15 @@
     
     <div id="notebox" >
         {%if formatted %}
-            {{formatted|safe}}
+            
+        {% endif %}
+
+        {% if keysInOrder %}
+            {{keysInOrder|safe}}
+        {% endif %}
+
+        {% if durationsInOrder %}
+            {{durationsInOrder|safe}}
         {% endif %}
     </div>
 
@@ -71,6 +79,8 @@
                     case 0.375:
                         timeSignature = "3/8";
                 }
+
+                return timeSignature;
             }
 
             import { getNoteList, Note } from "{% static 'js/transcribe.js' %}"
@@ -91,7 +101,9 @@
 
             var timeSigNum = 4;
             var timeSigDenom = 4;
-            let timeSignature = getTimeSignature({{timeSignature|safe}});
+            console.log({{time_signature|safe}})
+            var timeSignature = getTimeSignature({{ time_signature | safe }});
+            console.log("time signature: ", timeSignature)
             let clef = "treble";
             try {
                 //TODO: this will not work for some reason.
