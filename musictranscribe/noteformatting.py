@@ -162,8 +162,7 @@ def convertToBeat(note: dict, time_sig, windowsize = WINDOW_SIZE):
     rawDuration = getDurations(note)
     duration_beats = rawDuration / windowsize
     duration_beats = round(duration_beats * 2) / 2
-    duration_beats = max(duration_beats, 0.5)
-    assert(duration_beats > 0)
+    
     return duration_beats
 
 def vexForm(notelist, time_sig, windowsize=8):
@@ -197,8 +196,16 @@ def completeFormatting(notelist, time_sig = '4/4'):
     for note in notelist:   
         assert(getDurations(note) > 0)
 
+    #remove notes/rests that are smaller than one-half a beat (after rounding)
+    notelistholder = []
     for note in notelist:
         note['duration'] = convertToBeat(note, time_sig)
+        if note['duration'] >= 0.5:
+            notelistholder.append(note)
+
+    notelist = notelistholder
+
+    
 
     durationList = getDurations(notelist)
     keyList = getKeys(notelist)
