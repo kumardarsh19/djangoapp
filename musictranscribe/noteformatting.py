@@ -232,4 +232,4 @@ def completeFormatting(notelist, time_sig = '4/4'):
 
 
     
-    return staveNoteList
+    return staveNoteList, keyList, durationList
