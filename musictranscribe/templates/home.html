@@ -50,6 +50,14 @@
         {%if formatted %}
             {{formatted|safe}}
         {% endif %}
+
+        {% if keysInOrder %}
+            {{keysInOrder|safe}}
+        {% endif %}
+
+        {% if durationsInOrder %}
+            {{durationsInOrder|safe}}
+        {% endif %}
     </div>
 
     {%if formatted|length > 0 %}
