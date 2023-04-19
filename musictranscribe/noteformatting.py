@@ -154,7 +154,7 @@ def removeTies(staveNoteList):
 def removeLargeNotes(notelist, maxSize):
     ret = []
     for note in notelist:
-        duration = int(note['duration'])
+        duration = getDurations(note)
         while (duration > maxSize):
             ret.append(generateNote(note['key'], maxSize))
             duration -= maxSize
@@ -177,18 +177,13 @@ def vexForm(notelist, time_sig, windowsize=8):
         beatDuration = getDurations(note)
         opposite = oneBeat / beatDuration
         if math.log(opposite, 2) % 1 == 0:
-            beatlist.append(generateNote(note['key'], opposite))
+            beatlist.append(generateNote(note['key'], int(opposite)))
         else:
-            beatlist.append(generateNote(note['key'], oneBeat / ( 2/3 * beatDuration)))
-            beatlist.append(generateNote(note['key'], oneBeat / (1 / 3 * beatDuration)))
+            beatlist.append(generateNote(note['key'], int(oneBeat / ( 2/3 * beatDuration))))
+            beatlist.append(generateNote(note['key'], int(oneBeat / (1 / 3 * beatDuration))))
 
     return beatlist
                 
-
-
-def checkStaves(stavelist, beatsPerStave):
-    for stave in stavelist:
-        assert(sum(getDurations(stave)) == beatsPerStave)
 
 #input integrator output
 #notelist: each duration is in units of 1/8th beat
@@ -205,10 +200,10 @@ def completeFormatting(notelist, time_sig = '4/4'):
     notelist = removeLargeNotes(notelist, 8 * beatsPerMeasure)
     assert(len(notelist) >= originalsize)
     for note in notelist:   
-        assert(int(note['duration']) > 0)
+        assert(getDurations(note) > 0)
 
     for note in notelist:
-        note['duration'] = str(convertToBeat(note, time_sig))
+        note['duration'] = convertToBeat(note, time_sig)
 
     durationList = getDurations(notelist)
     keyList = getKeys(notelist)
@@ -234,6 +229,7 @@ def completeFormatting(notelist, time_sig = '4/4'):
         assert(0 not in durations)
         assert(sum(durations) == beatsPerMeasure)
         staveNoteList[key] = vexForm(stave, time_sig)
+
 
     
     return staveNoteList
