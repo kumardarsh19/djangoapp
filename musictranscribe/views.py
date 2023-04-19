@@ -80,7 +80,7 @@ def home_view(request):
             context['numBars'] = getNumBars(notesPitches, timeSignature)
 
             context['clef'] = clef
-            context['timeSignature'] = timeSignature
+            context['time_signature'] = timeSignature
             print(f"time_signature: {timeSignature}")
 
             context['keysInOrder'] = keyList
