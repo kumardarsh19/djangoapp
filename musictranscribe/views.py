@@ -52,8 +52,8 @@ def home_view(request):
             # Estimate tempo if user does not enter it.
             estTempo, beats = librosa.beat.beat_track(y=signal, sr=fs)
             if tempo == 0: tempo = estTempo
-            else: tempo = int(tempo)
-            tempo = 10 * round(tempo / 10)
+            else: tempo = int(10 * round(tempo / 10))
+
             print(f"tempo: {tempo}")
             print(f"beats: {beats}")
 
