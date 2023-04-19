@@ -60,10 +60,8 @@ def integrate(pitches, onsets):
         notes.append(generateNote('R', duration))
     return notes
 
-
-
-def getNumStaves(durationList, time_signature='4/4'):
-    assert(len(durationList) > 0)
+def getNumStaves(notelist, time_signature='4/4'):
+    assert(len(notelist) > 0)
     # Determine how many eighth notes we can get per stave.
     time_signature_frac = time_signature.split('/')
     numerator, denominator = int(time_signature_frac[0]), int(time_signature_frac[1])
@@ -139,8 +137,6 @@ def assignStaves(notelist, numStaves, beatsPerMeasure, oneBeat):
 
     return staveNoteList
 
-#changes duration to vexform
-
 def removeTies(staveNoteList):
     for stave in staveNoteList.values():
         for note in stave:
@@ -189,7 +185,6 @@ def vexForm(notelist, time_sig, windowsize=8):
 #notelist: each duration is in units of 1/8th beat
 #duration 4 -> 4* 1/8th beats long
 def completeFormatting(notelist, time_sig = '4/4'):
-    
     assert(len(time_sig.split('/')) == 2)
     beatsPerMeasure = int(time_sig[0])
     oneBeat = int(time_sig[-1])
