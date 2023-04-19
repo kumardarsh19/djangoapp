@@ -6,7 +6,7 @@ def generateNote(key, duration):
     note = {}
     if '/4' in key: key = key[0]
     note['key'] = key + '/4'
-    note['duration'] = str(int(duration))
+    note['duration'] = duration
     if (key == 'R'): note['typ'] = 'r'
     else: note['typ'] = 'n'
     return note
@@ -17,9 +17,9 @@ def generateNote(key, duration):
 #return duration(s) of input
 def getDurations(notelist):
     if isinstance(notelist, dict):
-        return (float(notelist['duration']))
+        return (notelist['duration'])
     elif isinstance(notelist, list):
-        return [(float(note['duration'])) for note in notelist]
+        return [(note['duration']) for note in notelist]
     else:
         assert(0), "getDurations fails"
 
@@ -34,9 +34,9 @@ def getKeys(notelist):
 
 def splitNote(note, dur1, dur2):
     note1 = generateNote(note['key'], dur1)
-    note1['duration'] = dur1
+    
     note2 = generateNote(note['key'], dur2)
-    note2['duration'] = dur2
+    
     tieNotes(note1, note2)
     return [note1, note2]
 
@@ -62,8 +62,8 @@ def integrate(pitches, onsets):
 
 
 
-def getNumStaves(notelist, time_signature='4/4'):
-    assert(len(notelist) > 0)
+def getNumStaves(durationList, time_signature='4/4'):
+    assert(len(durationList) > 0)
     # Determine how many eighth notes we can get per stave.
     time_signature_frac = time_signature.split('/')
     numerator, denominator = int(time_signature_frac[0]), int(time_signature_frac[1])
@@ -76,8 +76,8 @@ def getNumStaves(notelist, time_signature='4/4'):
     # Determine how many staves we need.
     totalDuration = 0
     numStaves = 1
-    for i in range(len(notelist)):
-        duration = int(notelist[i]['duration'])
+    for i in range(len(durationList)):
+        duration = int(durationList[i]['duration'])
         totalDuration += duration
         if (totalDuration > beatsPerMeasure):
             numStaves += 1
@@ -131,18 +131,10 @@ def assignStaves(notelist, numStaves, beatsPerMeasure, oneBeat):
         totalBeats = sum(getDurations(stave))
         while(totalBeats < beatsPerMeasure):
             difference = beatsPerMeasure - totalBeats
-            while (difference >= 4):
-                stave.append(generateNote('R', 4))
-                difference -= 4
-            while (difference >= 2):
-                stave.append(generateNote('R', 2))
-                difference -= 2
-            while (difference >= 1):
-                stave.append(generateNote('R', 1))
-                difference -= 1
-            while (difference >= .5):
-                stave.append(generateNote('R', .5))
-                difference -= .5
+            for remainder in [4, 2, 1, .5]:
+                while (difference >= remainder):
+                    stave.append(generateNote('R', remainder))
+                    difference -= remainder
             totalBeats = sum(getDurations(stave))
 
     return staveNoteList
