@@ -53,6 +53,8 @@ def home_view(request):
             estTempo, beats = librosa.beat.beat_track(y=signal, sr=fs)
             if tempo == 0: tempo = estTempo
             else: tempo = int(tempo)
+            tempo = 10 * round(tempo / 10)
+            print(f"tempo: {tempo}")
             print(f"beats: {beats}")
 
             # Call rhythm and pitch processors.
@@ -68,7 +70,7 @@ def home_view(request):
             context['integrated'] = json.dumps(integratedList, indent=1)
 
             # Get notes assigned to respective stave index.
-            formattedList = completeFormatting(integratedList)
+            formattedList, keyList, durList = completeFormatting(integratedList)
 
             # Calculate number of staves needed with total duration of notes.
             context['number_staves'] = len(formattedList)
@@ -80,6 +82,10 @@ def home_view(request):
             context['clef'] = clef
             context['timeSignature'] = timeSignature
             print(f"time_signature: {timeSignature}")
+
+            context['keysInOrder'] = keyList
+            context['durationsInOrder'] = durList
+
             return render(request, 'home.html', context)
     return render(request, "home.html", context)
 
