@@ -148,7 +148,8 @@
                     console.log("note: " + note)
                     
                     if (note.invisible) return;
-
+                    
+                    console.log(note.key)
                     let staveNote = new StaveNote({
                         keys: [note.key],
                         duration: note.duration,
