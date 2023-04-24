@@ -49,10 +49,11 @@ def home_view(request):
             signal = signal[np.where(signal != 0)[0][0]:]
             print("New signal size: %d" % signal.size)
 
-            #Add noise
-            # noise = np.random.normal(0, 0.5, len(signal))
-            # print()
-            # signal = signal + noise
+            #Add noise to test SNR-threshold.
+            noise = np.random.normal(0, 2, len(signal))
+            signal = signal + noise
+            snr = signaltonoise(signal)
+            print(f"\n\nSNR: {snr}\n\n")
 
             # Estimate tempo if user does not enter it.
             estTempo, beats = librosa.beat.beat_track(y=signal, sr=fs)
