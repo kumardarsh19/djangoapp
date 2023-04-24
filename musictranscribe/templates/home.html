@@ -32,11 +32,10 @@
             element = document.getElementById("musicsheet").children[0];
             svgExport.downloadSvg(
                 element, // SVG DOM Element object to be exported. Alternatively, a string of the serialized SVG can be passed
-                "chart title name", // chart title: file name of exported image
+                "Transcribed by Music Transcribe", // TODO: chart title: file name of exported image
 
             );
-            svgExport.downloadPdf(element, "chart title name");
-            
+            svgExport.downloadPdf(element, "Transcription");
         }
     </script>
     <div class = "container-fluid py-4">
@@ -195,16 +194,6 @@
                     tie.setContext(context).draw();
                 }
             }
-
-            console.log('RAHHH')
-            console.log(document.getElementById('musicsheet').children[0])
-            console.log(document.getElementsByTagName('svg')[0])
-
-            
-        
-            
-            
-
         </script>
     {% endif %}
 
