@@ -8,8 +8,6 @@ from scipy.signal import *
 from statistics import mean
 from audioprocessing.globalvars import *
 
-
-
 '''
 Apply rectangular window of size window_width to signal
 starting at index starti

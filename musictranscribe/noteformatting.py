@@ -4,15 +4,11 @@ from audioprocessing.globalvars import *
 
 def generateNote(key, duration):
     note = {}
-    
     note['key'] = key
     note['duration'] = duration
     if (key == 'R/4'): note['typ'] = 'r'
     else: note['typ'] = 'n'
     return note
-
-
-
 
 #return duration(s) of input
 def getDurations(notelist):
@@ -34,9 +30,7 @@ def getKeys(notelist):
 
 def splitNote(note, dur1, dur2):
     note1 = generateNote(note['key'], dur1)
-    
     note2 = generateNote(note['key'], dur2)
-    
     tieNotes(note1, note2)
     return [note1, note2]
 
@@ -162,7 +156,6 @@ def convertToBeat(note: dict, time_sig, windowsize = WINDOW_SIZE):
     rawDuration = getDurations(note)
     duration_beats = rawDuration / windowsize
     duration_beats = round(duration_beats * 2) / 2
-    
     return duration_beats
 
 def vexForm(notelist, time_sig, windowsize=8):
@@ -176,9 +169,7 @@ def vexForm(notelist, time_sig, windowsize=8):
         else:
             beatlist.append(generateNote(note['key'], int(oneBeat / ( 2/3 * beatDuration))))
             beatlist.append(generateNote(note['key'], int(oneBeat / (1 / 3 * beatDuration))))
-
     return beatlist
-                
 
 #input integrator output
 #notelist: each duration is in units of 1/8th beat
@@ -187,7 +178,6 @@ def completeFormatting(notelist, time_sig = '4/4'):
     assert(len(time_sig.split('/')) == 2)
     beatsPerMeasure = int(time_sig[0])
     oneBeat = int(time_sig[-1])
-
     originalsize = len(notelist)
 
     #1. remove notes that are longer than one full measure in length
@@ -204,9 +194,6 @@ def completeFormatting(notelist, time_sig = '4/4'):
             notelistholder.append(note)
 
     notelist = notelistholder
-
-    
-
     durationList = getDurations(notelist)
     keyList = getKeys(notelist)
 
@@ -216,7 +203,6 @@ def completeFormatting(notelist, time_sig = '4/4'):
     while (numStaves % 3 != 0): numStaves += 1
 
     #3. assign a stave index to each note
-    
     staveNoteList = assignStaves(notelist, numStaves, beatsPerMeasure, oneBeat)
 
     #removeTies(staveNoteList)
@@ -231,7 +217,4 @@ def completeFormatting(notelist, time_sig = '4/4'):
         assert(0 not in durations)
         assert(sum(durations) == beatsPerMeasure)
         staveNoteList[key] = vexForm(stave, time_sig)
-
-
-    
     return staveNoteList, keyList, durationList

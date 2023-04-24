@@ -2,7 +2,6 @@ from sklearn import preprocessing
 import numpy as np
 from audioprocessing.globalvars import *
 
-
 '''
 Reshape to 1-D array (if not already)
 Divide every sample by the max value
