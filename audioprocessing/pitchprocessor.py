@@ -68,16 +68,20 @@ def getPitchList(sample_rate, time_domain_sig, tempo=DEFAULT_TEMPO, plot=0):
         freq = freq_ax[maxout] if not type(freq_ax[maxout]).__module__ == np.__name__ else mean(freq_ax[maxout])
         try:
             if (freq == 0):
-                notes.append("R")
+                notes.append("R/4")
                 continue
         except:
             print(f"freq: {freq}; type: {type(freq_ax[maxout])}")
             return
 
+        octave = 4
+        if freq < 250: octave = 3
+        if freq > 510: octave = 5
         #Apply standard formula to determine number of steps away from A
         num_semitones = round(12 * math.log2(freq / A4))
         note = LNOTES[num_semitones % 12]
-        notes.append(note)
+        x = note + '/' + str(octave)
+        notes.append(note + '/' + str(octave))
     print(f"\n--------Pitch Processor output--------\n{notes}")
     return notes
 

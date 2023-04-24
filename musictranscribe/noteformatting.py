@@ -4,10 +4,10 @@ from audioprocessing.globalvars import *
 
 def generateNote(key, duration):
     note = {}
-    if '/4' in key: key = key[0]
-    note['key'] = key + '/4'
+    
+    note['key'] = key
     note['duration'] = duration
-    if (key == 'R'): note['typ'] = 'r'
+    if (key == 'R/4'): note['typ'] = 'r'
     else: note['typ'] = 'n'
     return note
 
@@ -52,12 +52,12 @@ def integrate(pitches, onsets):
             notes.append(generateNote(pitches[i-1], duration))
             duration = 1
         else:
-            notes.append(generateNote('R', duration))
+            notes.append(generateNote('R/4', duration))
             duration = 1
     if (onsets[-1] == 1):
         notes.append(generateNote(pitches[-1], duration))
     else:
-        notes.append(generateNote('R', duration))
+        notes.append(generateNote('R/4', duration))
     return notes
 
 def getNumStaves(notelist, time_signature='4/4'):
@@ -131,7 +131,7 @@ def assignStaves(notelist, numStaves, beatsPerMeasure, oneBeat):
             difference = beatsPerMeasure - totalBeats
             for remainder in [4, 2, 1, .5]:
                 while (difference >= remainder):
-                    stave.append(generateNote('R', remainder))
+                    stave.append(generateNote('R/4', remainder))
                     difference -= remainder
             totalBeats = sum(getDurations(stave))
 

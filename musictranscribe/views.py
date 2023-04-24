@@ -91,6 +91,7 @@ def home_view(request):
             context['keysInOrder'] = keyList
             context['durationsInOrder'] = durList
 
+            print("Number of onsets: %d" % len(durList))
             return render(request, 'home.html', context)
     return render(request, "home.html", context)
 

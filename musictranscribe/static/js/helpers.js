@@ -41,9 +41,9 @@ export function getStaveNotes(pitches, onsets, Vex) {
         let duration = Math.round(onsetSlice.length / 8);
         currNote = [pitches[startIndex]];
         while (!isValidDuration(duration)) duration++;
-        let keys = currNote + '/4';
+        let keys = currNote;
         let type = 'n';
-        if (currNote == 'R') type = 'r';
+        if (currNote == 'R/4') type = 'r';
         console.log(keys, duration, types[keys.length]);
         let vexNote = new StaveNote({
             keys: keys,
