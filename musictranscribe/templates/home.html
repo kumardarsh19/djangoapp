@@ -10,7 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <header class="bg-primary text-white text-center py-2">
-        <h1 class="display-4">Music Transcribe</h1>
+        <h1 class="display-4">Musician's Scribe</h1>
     </header>
 </head>
 
@@ -30,12 +30,14 @@
     <script>
         function savePDF() {
             element = document.getElementById("musicsheet").children[0];
-            svgExport.downloadSvg(
-                element, // SVG DOM Element object to be exported. Alternatively, a string of the serialized SVG can be passed
-                "Transcribed by Music Transcribe", // TODO: chart title: file name of exported image
-
-            );
+        
             svgExport.downloadPdf(element, "Transcription");
+        }
+
+        function saveJpeg() {
+            element = document.getElementById("musicsheet").children[0];
+    
+            svgExport.downloadPng(element, "Transcription");
         }
     </script>
     <div class = "container-fluid py-4">
@@ -46,8 +48,11 @@
                     {{form.as_p}}
                 </div>
             </table>
-            <input class="btn btn-primary" type="submit" value="Submit">
+            <input class="btn btn-primary" type="submit" value="Generate Transcription">
+            {% if post %}
             <input class="btn btn-primary" type="submit" value="Save PDF" onclick="savePDF()">
+            
+            {% endif %}
         </form>
     </div>
 
