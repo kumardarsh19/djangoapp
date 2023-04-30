@@ -19,7 +19,7 @@ def segmentSignal(signal, window_width, starti):
 
 def getPitchList(sample_rate, time_domain_sig, tempo=DEFAULT_TEMPO, plot=0):
     notes = []
-    
+
     if (plot):
         plt.plot(time_domain_sig)
         plt.show()
