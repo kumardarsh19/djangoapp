@@ -35,7 +35,9 @@ def home_view(request):
             timeSignature = form.cleaned_data['time_signature']
             clef = form.cleaned_data['clef']
             tempo = int(form.cleaned_data['tempo'])
-            fs, signal = wavfile.read(file)
+            signal, fs = librosa.load(file, mono=1)
+            
+            print("Librosa signal shape: ", signal.shape)
 
             # Check SNR >= 60 dB.
             if not validSNR(signal):
