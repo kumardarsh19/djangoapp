@@ -107,19 +107,6 @@
         } 
     </script>
     
-    <div id="notebox" >
-        {%if formatted %}
-            
-        {% endif %}
-
-        {% if keysInOrder %}
-            {{keysInOrder|safe}}
-        {% endif %}
-        <p></p>
-        {% if durationsInOrder %}
-            {{durationsInOrder|safe}}
-        {% endif %}
-    </div>
 
     {%if formatted|length > 0 %}
         <div id="boo"></div>
